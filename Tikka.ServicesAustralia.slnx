@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="compose.yaml" />
+  </Folder>
+  <Project Path="AgedCareMicroservice.API/AgedCareMicroservice.API.csproj" />
+  <Project Path="Auth.API/Auth.API.csproj" />
+  <Project Path="Tikka.ServicesAustralia/Tikka.ServicesAustralia.csproj" />
+</Solution>

@@ -1,0 +1,111 @@
+using Microsoft.OpenApi;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+
+// Database
+builder.Services.AddDbContext<AuthContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")
+                      ?? builder.Configuration.GetConnectionString("DockerConnection"));
+});
+
+// Middlewares
+builder.Services.AddSingleton<BlackListMiddleware>();
+
+// Validators
+builder.Services
+    .AddScoped<RegisterRequestValidator>()
+    .AddScoped<LoginRequestValidator>()
+    .AddScoped<ConfirmEmailCodeDtoValidator>()
+    .AddScoped<RequestConfirmationCodeDtoValidator>()
+    .AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+
+// Configure Email
+EmailConfig emailConfig = new();
+builder.Configuration.GetSection("EmailConfig").Bind(emailConfig);
+builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton<SmtpClient>();
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Services
+builder.Services
+    .AddScoped<IAccountService, AccountService>()
+    .AddScoped<IJwtService, JwtService>()
+    .AddSingleton<IEmailService, EmailService>()
+    .AddSingleton<IBlackListService, BlackListService>();
+
+
+// JWT Authentication
+JwtConfig jwtConfig = new();
+builder.Configuration.GetSection("JWT").Bind(jwtConfig);
+builder.Services.AddSingleton(jwtConfig);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.Secret)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
+// Swagger
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Auth API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("bearer", document)] = []
+    });
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    await app.InitialiseDatabaseAsync();
+    app.MapOpenApi();
+
+    // Swagger in Development
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Auth V1"));
+}
+else
+{
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<BlackListMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+await app.RunAsync();

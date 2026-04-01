@@ -1,0 +1,33 @@
+// Global using directives
+
+global using System;
+global using System.Collections.Concurrent;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Net;
+global using System.Security.Claims;
+global using System.Security.Cryptography;
+global using System.Text;
+global using System.Text.Json;
+global using FluentValidation;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.IdentityModel.Tokens;
+global using MimeKit;
+global using Horus.API.Common;
+global using Horus.API.Configs;
+global using Horus.API.Data;
+global using Horus.API.DTOs;
+global using Horus.API.Entities;
+global using Horus.API.Enums;
+global using Horus.API.Exceptions;
+global using Horus.API.Extensions;
+global using Horus.API.Middlewares;
+global using Horus.API.Repositories;
+global using Horus.API.Services;
+global using Horus.API.Validators;
+global using MailKit.Net.Smtp;
+global using MailKit.Security;
+global using Microsoft.EntityFrameworkCore.Migrations;
+global using MimeKit.Text;
