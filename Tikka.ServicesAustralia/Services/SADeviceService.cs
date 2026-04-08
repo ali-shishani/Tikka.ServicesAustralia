@@ -48,7 +48,7 @@ public class SADeviceService : ISADeviceService
         logText += Environment.NewLine + "RSA key public JWK: " + publicJwk;
 
         // build the request body
-        var reqBody = HTTPUtility.buildActivationRequest(_servicesAustraliaDeviceConfig.OrganisationRA, activationCode, publicJwk);
+        var reqBody = httpUtil.buildActivationRequest(_servicesAustraliaDeviceConfig.OrganisationRA, activationCode, publicJwk);
         logText += Environment.NewLine + "reqBody: " + reqBody;
 
         // execute the HTTP request

@@ -17,9 +17,9 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpGet("GetAccessToken")]
-    public async Task<ActionResult<string>> GetAccessToken()
+    public async Task<ActionResult<string>> GetAccessToken(bool forceNewToken)
     {
-        var result = _authenticationService.GetAccessToken();
+        var result = _authenticationService.GetAccessToken(forceNewToken);
         return await Task.FromResult(Ok(result));
     }
 }

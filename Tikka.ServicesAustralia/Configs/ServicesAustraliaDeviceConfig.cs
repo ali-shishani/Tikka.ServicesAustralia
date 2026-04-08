@@ -13,5 +13,7 @@ namespace Tikka.ServicesAustralia.Configs
         public string DeviceName { get; set; } = string.Empty;
 
         public string OrganisationRA { get; set; } = string.Empty;
+
+        public string TokenAud { get; set; } = string.Empty;
     }
 }

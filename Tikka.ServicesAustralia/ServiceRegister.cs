@@ -13,6 +13,7 @@ public static class ServiceRegister
 {
     public static IServiceCollection RegisterTikkaServices(this IServiceCollection services)
     {
+        services.AddSingleton<ITokenService, TokenService>();
         services.AddScoped<ISADeviceService, SADeviceService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         

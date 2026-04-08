@@ -22,10 +22,17 @@ namespace Tikka.ServicesAustralia.Utilities
             }
         }
 
-        public static string buildActivationRequest(string orgRa, string activationCode, string jwk)
+        public string buildActivationRequest(string orgRa, string activationCode, string jwk)
         {
             // open json object
             return "{" + "\"orgId\": \"" + orgRa + "\", \"otac\": \"" + activationCode + "\",\"key\": " + jwk + "}";
+        }
+
+        public string buildAccessTokenRequest(string clientId, string assertion)
+        {
+            // Builds an access token request payload
+
+            return "client_id=" + clientId + "&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=" + assertion;
         }
 
         private byte[] prepareRequestBody(string reqBody)
@@ -64,6 +71,49 @@ namespace Tikka.ServicesAustralia.Utilities
                 request.Method = "PUT";
                 request.ContentType = "application/json";
                 request.Accept = "application/json";
+                request.ContentLength = reqBodyBytes.Length;
+
+                //send the request
+                var requestStream = request.GetRequestStream() as Stream;
+                requestStream.Write(reqBodyBytes, 0, reqBodyBytes.Length);
+                requestStream.Close();
+
+                // get response
+                var responseReader = new StreamReader(request.GetResponse().GetResponseStream());
+                responseData = responseReader.ReadToEnd();
+            }
+            catch (WebException ex)
+            {
+                // handle errors
+                // get the error message and display in log window
+                var responseReader = new StreamReader(ex.Response.GetResponseStream());
+                responseData = responseReader.ReadToEnd();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return responseData;
+        }
+
+        public string executeGetAccessTokenRequest(string reqBody)
+        {
+            string responseData;
+            try
+            {
+                // create the http request object & apply proxy
+                var url = "https://vnd.proda.humanservices.gov.au/mga/sps/oauth/oauth20/token";
+                var request = HttpWebRequest.Create(url) as HttpWebRequest;
+                request.Proxy = proxy;
+
+                // convert request body to byte array
+                var reqBodyBytes = prepareRequestBody(reqBody);
+
+                // build request headers
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                //request.Accept = "application/json";
                 request.ContentLength = reqBodyBytes.Length;
 
                 //send the request
