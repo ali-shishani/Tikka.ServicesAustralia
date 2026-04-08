@@ -1,4 +1,4 @@
-# 🔐 CleanAuth Microservices Solution
+# 🔐 Tikka Services Australia Microservices Solution
 
 > Complete authentication system and microservices on .NET 10 with JWT authorization
 
@@ -12,21 +12,21 @@
 
 This solution consists of three interconnected projects:
 
-### 1. 🔐 CleanAuth.API - Authentication Service
+### 1. 🔐 Auth.API - Authentication Service
 
-Main authentication service with full implementation without ASP.NET Core Identity
+Main authentication service with full implementation without ASP.NET Core Identity. This optional authentication is to help securing any end-point in any Microservice if required.
 
-### 2. 📦 JwtAuthForMicroservice - JWT Library
+### 2. 📦 Tikka.ServicesAustralia - .Net Library (Nuget Package)
 
-Reusable library for JWT authentication in microservices
+Reusable library for JWT authentication, Services Australia services in microservices
 
-### 3. 🚀 MiniMicroservice.API - Example Microservice
+### 3. 🚀 AgedCare.Microservice.API - Example Microservice
 
-Demonstration microservice using JWT library for authorization
+Demonstration microservice using Services Australia library
 
 ## 🚀 Key Features
 
-### CleanAuth.API
+### Auth.API
 
 - **🎯 Without ASP.NET Core Identity** - fully custom implementation
 - **🏗️ Clean Architecture** - clear separation of layers and responsibilities
@@ -37,12 +37,14 @@ Demonstration microservice using JWT library for authorization
 - **📊 Structured Logging** - detailed logging of all operations
 - **🔐 BCrypt** - reliable password hashing
 
-### JwtAuthForMicroservice
+### ServicesAustraliaForMicroservice
 
 - **🔧 Reusable Library** - easy integration into any microservice
 - **🛡️ JWT Middleware** - automatic token processing
 - **⚡ Easy Setup** - simple registration via extension methods
 - **🔍 Token Validation** - signature verification and claims extraction
+- **🔍 PRODA B2B Device Activation** - Creating key and activating the device
+- **🔍 PRODA Token management** - Get access token, validate and refresh token
 
 ### MiniMicroservice.API
 
@@ -54,15 +56,15 @@ Demonstration microservice using JWT library for authorization
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           CleanAuth Microservices Solution                      │
+│                           Auth Microservices Solution                           │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
                 ┌───────────────────────┼───────────────────────┐
                 │                       │                       │
                 ▼                       ▼                       ▼
 ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   CleanAuth.API     │    │JwtAuthForMicroservice│   │ MiniMicroservice.API│
-│                     │    │                     │    │                     │
+│        Auth.API     │    │  Services Australia │    │ AgedCareMicroservice│
+│                     │    │    Library (Nuget)  │    │       .API          │
 │ ┌─────────────────┐ │    │ ┌─────────────────┐ │    │ ┌─────────────────┐ │
 │ │   Controllers   │ │    │ │  JwtRegister    │ │    │ │   Controllers   │ │
 │ │ • AccountCtrl   │ │    │ │ • Extension     │ │    │ │ • PersonsCtrl   │ │
@@ -71,7 +73,7 @@ Demonstration microservice using JWT library for authorization
 │ ┌─────────────────┐ │    │ ┌─────────────────┐ │    │                     │
 │ │    Services     │ │    │ │   Middlewares   │ │    │ Uses JWT Library    │
 │ │ • AccountSvc    │ │    │ │ • JwtMiddleware │ │    │ for Authentication  │
-│ │ • EmailSvc      │ │    │ │ • Token Valid   │ │    │                     │
+│ │ • EmailSvc      │ │    │ │ • Token Valid   │ │    │    (Optional)       │
 │ │ • JwtSvc        │ │    │ └─────────────────┘ │    │                     │
 │ └─────────────────┘ │    │ ┌─────────────────┐ │    │                     │
 │ ┌─────────────────┐ │    │ │    Services     │ │    │                     │
