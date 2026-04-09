@@ -702,13 +702,6 @@ volumes:
   postgres_data:
 ```
 
-## 👨‍💻 Author
-
-**Bahram Bayramzade**
-
-- GitHub: [@BZBaXraM](https://github.com/BZBaXraM)
-- Email: baxram1997007@gmail.com
-
 ## 🙏 Acknowledgments
 
 - [BCrypt.Net](https://github.com/BcryptNet/bcrypt.net) - for reliable password hashing
@@ -718,5 +711,3 @@ volumes:
 - [JWT](https://jwt.io/) - for authentication tokens
 
 ---
-
-⭐ **Star this project if it was helpful!**
