@@ -30,4 +30,11 @@ public class DeviceController : ControllerBase
         var resultLog = _deviceService.Activate(activationCode);
         return await Task.FromResult(Ok(resultLog));
     }
+
+    [HttpPut("RefreshKey")]
+    public async Task<ActionResult<string>> RefreshKeyRefreshKey()
+    {
+        var resultLog = _deviceService.RefreshKey();
+        return await Task.FromResult(Ok(resultLog));
+    }
 }

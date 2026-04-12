@@ -71,4 +71,11 @@ public class SADeviceService : ISADeviceService
 
         return logText;
     }
+
+    public string RefreshKey()
+    {
+        var result = string.Empty;
+
+        return result;
+    }
 }
