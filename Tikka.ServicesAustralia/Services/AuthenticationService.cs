@@ -29,9 +29,10 @@ public class AuthenticationService : IAuthenticationService
         _servicesAustraliaDeviceConfig = servicesAustraliaDeviceConfig;
     }
 
-    public string GetAccessToken(bool forceNewToken, string audience = null)
+    public (string log, string accessToken) GetAccessToken(bool forceNewToken, string audience = null)
     {
         var logResult = string.Empty;
+        var accessToken = string.Empty;
 
         // set the token.aud(ience) for the token request
         var tokenAudience = _servicesAustraliaDeviceConfig.TokenAud;
@@ -49,7 +50,8 @@ public class AuthenticationService : IAuthenticationService
             var tokenTuple = _tokenService.retrieveAccessTokenIfValid(tokenAudience);
             if (tokenTuple != null)
             {
-                return tokenTuple.Item2;
+                accessToken = tokenTuple.Item2;
+                return (logResult, accessToken);
             }
         }
 
@@ -98,6 +100,7 @@ public class AuthenticationService : IAuthenticationService
             _tokenService.AddAccessToken(tokenAudience, responseObject.access_token, expDate);
 
             logResult += "token added to the token service: " + responseObject.access_token + Environment.NewLine;
+            accessToken = responseObject.access_token;
         }
         else
         {
@@ -107,6 +110,6 @@ public class AuthenticationService : IAuthenticationService
                 logResult += "for some reason we didnt get an access token" + Environment.NewLine + "Response:" + result;
         }
 
-        return logResult;
+        return (logResult, accessToken);
     }
 }

@@ -6,6 +6,5 @@ public interface ISADeviceService
 {
     string GetDeviceInfo();
     string Activate(string activationCode);
-
     string RefreshKey();
 }

@@ -12,14 +12,19 @@ public class SADeviceService : ISADeviceService
 
     private ServicesAustraliaDeviceConfig _servicesAustraliaDeviceConfig { get; set; }
 
+    private IAuthenticationService _authenticationService { get; set; }
+
     private HTTPUtility httpUtil { get; set; } = new HTTPUtility(string.Empty, string.Empty, string.Empty);
 
     private RSAKeyUtility rsaKeyUtility { get; set; } = new RSAKeyUtility();
     
 
-    public SADeviceService(ServicesAustraliaDeviceConfig servicesAustraliaDeviceConfig)
+    public SADeviceService(
+        ServicesAustraliaDeviceConfig servicesAustraliaDeviceConfig,
+        IAuthenticationService authenticationService)
     {
         _servicesAustraliaDeviceConfig = servicesAustraliaDeviceConfig;
+        _authenticationService = authenticationService;
     }
 
     public string GetDeviceInfo()
@@ -74,8 +79,50 @@ public class SADeviceService : ISADeviceService
 
     public string RefreshKey()
     {
-        var result = string.Empty;
+        var logText = string.Empty;
 
-        return result;
+        // generate a new key, but dont persist in the key store
+        var newKey = rsaKeyUtility.createKeys(_servicesAustraliaDeviceConfig.DeviceName, false);
+        logText += "New RSA key generated";
+
+        // get the public key in jwk format
+        var publicJwk = rsaKeyUtility.generatePublicJwk(_servicesAustraliaDeviceConfig.DeviceName, newKey);
+        logText += Environment.NewLine + "RSA key public JWK: " + publicJwk;
+
+
+        // get an access token for this call.
+        // NOTE: this call is an example of using a PRODA access token to
+        // authentcate to a 3rd party.  See HttpUtility class for example of putting
+        // the token in the authorization header.
+        var (log, accessToken) = _authenticationService.GetAccessToken(false);
+
+
+        // execute the HTTP request if we have an access token
+        if (!string.IsNullOrWhiteSpace(accessToken))
+        {
+            logText += Environment.NewLine + "Access token acquired: " + accessToken;
+            var result = httpUtil.executeRefreshKeyRequest(
+                _servicesAustraliaDeviceConfig.OrganisationRA,
+                _servicesAustraliaDeviceConfig.DeviceName,
+                _servicesAustraliaDeviceConfig.ProductId,
+                publicJwk,
+                accessToken);
+            logText += Environment.NewLine + "response: " + Environment.NewLine + "------------------------" + Environment.NewLine + result + Environment.NewLine + "------------------------";
+            
+            // determine if request was successful
+            if (result.Contains("ACTIVE"))
+            {
+                // convert response to object
+                var responseObject = JsonConvert.DeserializeObject<ActivateResponse>(result);
+                logText += Environment.NewLine + "Key Expiration: " + responseObject?.keyExpiry;
+                logText += Environment.NewLine + "Device Expiration: " + responseObject?.deviceExpiry;
+            }
+        }
+        else
+        {
+            logText += Environment.NewLine + "Failed to acquire access token.";
+        }
+
+        return logText;
     }
 }
