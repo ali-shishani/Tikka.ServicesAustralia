@@ -38,7 +38,8 @@ public class SADeviceService : ISADeviceService
         var deviceInfo = "ClientId:" + _servicesAustraliaDeviceConfig.ClientId +
              Environment.NewLine + "Product Id:" + _servicesAustraliaDeviceConfig.ProductId +
              Environment.NewLine + "Device Name:" + _servicesAustraliaDeviceConfig.DeviceName +
-             Environment.NewLine + "Organisation RA:" + _servicesAustraliaDeviceConfig.OrganisationRA;
+             Environment.NewLine + "Organisation RA:" + _servicesAustraliaDeviceConfig.OrganisationRA +
+             Environment.NewLine + "Token Audience:" + _servicesAustraliaDeviceConfig.TokenAud;
 
         var keyExpiration = await _storedInfoRepository.GetByCodeAsync(StoredInfoCode.KeyExpiration);
         deviceInfo += Environment.NewLine + "Key Expiry:" + keyExpiration?.Value;
