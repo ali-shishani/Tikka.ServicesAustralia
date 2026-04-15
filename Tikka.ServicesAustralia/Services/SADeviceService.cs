@@ -132,6 +132,9 @@ public class SADeviceService : ISADeviceService
                 logText += Environment.NewLine + "Key Expiration: " + responseObject?.keyExpiry;
                 logText += Environment.NewLine + "Device Expiration: " + responseObject?.deviceExpiry;
 
+                // update the key store
+                rsaKeyUtility.persistRsaKey(newKey, _servicesAustraliaDeviceConfig.DeviceName);
+
                 await _storedInfoRepository.UpsertByCodeAsync(StoredInfoCode.KeyExpiration, responseObject?.keyExpiry);
                 await _storedInfoRepository.UpsertByCodeAsync(StoredInfoCode.DeviceExpiration, responseObject?.deviceExpiry);
             }

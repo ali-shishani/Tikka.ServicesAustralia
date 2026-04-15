@@ -115,5 +115,40 @@ namespace Tikka.ServicesAustralia.Utilities
 
             return csp;
         }
+
+        public bool persistRsaKey(RSACryptoServiceProvider rsaCspOrig, string deviceName)
+        {
+            // to do this we have to "copy" the key into a new object with
+            // the flags set to save it in key store.
+
+            // build key container name
+            var keyContainerName = keyContainerBaseName + deviceName;
+
+            try
+            {
+                // get the key info into a parameters object
+                var rsaParamsOrig = rsaCspOrig.ExportParameters(true);
+
+                // create a new flags object with the relevant keystore
+                var cspParms = new CspParameters(24, "Microsoft Enhanced RSA and AES Cryptographic Provider", keyContainerName);
+                cspParms.Flags = CspProviderFlags.UseMachineKeyStore;
+
+                // create new csp
+                var rsaCsp = new RSACryptoServiceProvider(2048, cspParms);
+
+                // import the parameters from the original csp
+                rsaCsp.ImportParameters(rsaParamsOrig);
+
+                // release resources
+                rsaCsp.Dispose();
+            }
+            catch (CryptographicException ex)
+            {
+                // something went wrong, will need to implement some error handling
+                return false;
+            }
+
+            return true;
+        }
     }
 }
