@@ -51,6 +51,8 @@ public class AuthenticationService : IAuthenticationService
             if (tokenTuple != null)
             {
                 accessToken = tokenTuple.Item2;
+
+                logResult += "access Token exists: " + accessToken;
                 return (logResult, accessToken);
             }
         }
