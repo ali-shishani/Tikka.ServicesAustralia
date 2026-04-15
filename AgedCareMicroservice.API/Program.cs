@@ -1,5 +1,6 @@
 using Tikka.ServicesAustralia;
-using Tikka.ServicesAustralia.Middlewares;
+using Tikka.ServicesAustralia.Core;
+using Tikka.ServicesAustralia.Core.Middlewares;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// Configurations
+// Tikka Configurations
 builder.Services.RegisterConfigurations(builder.Configuration);
 
 // Swagger
@@ -37,7 +38,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Tikka Services
-builder.Services.RegisterTikkaServices();
+builder.Services.RegisterTikkaServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -57,7 +58,8 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<JwtMiddleware>();
+// Tikka Jwt Middleware
+//app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthorization();
 

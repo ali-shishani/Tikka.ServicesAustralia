@@ -2,10 +2,10 @@ using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Tikka.ServicesAustralia.Configs;
+using Tikka.ServicesAustralia.Core.Configs;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Tikka.ServicesAustralia.Services;
+namespace Tikka.ServicesAustralia.Core.Services;
 
 public class AccessTokenService(JwtConfig config)
     : IAccessTokenService

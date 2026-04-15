@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tikka.ServicesAustralia.Configs
+namespace Tikka.ServicesAustralia.Core.Configs
 {
     public class ServicesAustraliaDeviceConfig
     {

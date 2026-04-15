@@ -1,7 +1,9 @@
 
 using System.Security.Cryptography;
 using Newtonsoft.Json;
-using Tikka.ServicesAustralia.Configs;
+using Tikka.ServicesAustralia.Core.Configs;
+using Tikka.ServicesAustralia.Core.Data.Entities.Enums;
+using Tikka.ServicesAustralia.Core.Data.Repositories;
 using Tikka.ServicesAustralia.Models.Responses;
 using Tikka.ServicesAustralia.Utilities;
 
@@ -12,6 +14,8 @@ public class SADeviceService : ISADeviceService
 
     private ServicesAustraliaDeviceConfig _servicesAustraliaDeviceConfig { get; set; }
 
+    private IStoredInfoRepository _storedInfoRepository { get; set; }
+
     private IAuthenticationService _authenticationService { get; set; }
 
     private HTTPUtility httpUtil { get; set; } = new HTTPUtility(string.Empty, string.Empty, string.Empty);
@@ -20,24 +24,32 @@ public class SADeviceService : ISADeviceService
     
 
     public SADeviceService(
+        IStoredInfoRepository storedInfoRepository,
         ServicesAustraliaDeviceConfig servicesAustraliaDeviceConfig,
         IAuthenticationService authenticationService)
     {
+        _storedInfoRepository = storedInfoRepository;
         _servicesAustraliaDeviceConfig = servicesAustraliaDeviceConfig;
         _authenticationService = authenticationService;
     }
 
-    public string GetDeviceInfo()
+    public async Task<string> GetDeviceInfo()
     {
         var deviceInfo = "ClientId:" + _servicesAustraliaDeviceConfig.ClientId +
              Environment.NewLine + "Product Id:" + _servicesAustraliaDeviceConfig.ProductId +
              Environment.NewLine + "Device Name:" + _servicesAustraliaDeviceConfig.DeviceName +
              Environment.NewLine + "Organisation RA:" + _servicesAustraliaDeviceConfig.OrganisationRA;
 
+        var keyExpiration = await _storedInfoRepository.GetByCodeAsync(StoredInfoCode.KeyExpiration);
+        deviceInfo += Environment.NewLine + "Key Expiry:" + keyExpiration?.Value;
+
+        var deviceExpiration = await _storedInfoRepository.GetByCodeAsync(StoredInfoCode.DeviceExpiration);
+        deviceInfo += Environment.NewLine + "Device Expiry:" + deviceExpiration?.Value;
+
         return deviceInfo;
     }
 
-    public string Activate(string activationCode)
+    public async Task<string> Activate(string activationCode)
     {
         if (string.IsNullOrWhiteSpace(activationCode))
         {
@@ -72,12 +84,15 @@ public class SADeviceService : ISADeviceService
             var responseObject = JsonConvert.DeserializeObject<ActivateResponse>(result);
             logText += Environment.NewLine + "Key Expiration: " + responseObject?.keyExpiry;
             logText += Environment.NewLine + "Device Expiration: " + responseObject?.deviceExpiry;
+
+            await _storedInfoRepository.UpsertByCodeAsync(StoredInfoCode.KeyExpiration, responseObject?.keyExpiry);
+            await _storedInfoRepository.UpsertByCodeAsync(StoredInfoCode.DeviceExpiration, responseObject?.deviceExpiry);
         }
 
         return logText;
     }
 
-    public string RefreshKey()
+    public async Task<string> RefreshKey()
     {
         var logText = string.Empty;
 
@@ -116,6 +131,9 @@ public class SADeviceService : ISADeviceService
                 var responseObject = JsonConvert.DeserializeObject<ActivateResponse>(result);
                 logText += Environment.NewLine + "Key Expiration: " + responseObject?.keyExpiry;
                 logText += Environment.NewLine + "Device Expiration: " + responseObject?.deviceExpiry;
+
+                await _storedInfoRepository.UpsertByCodeAsync(StoredInfoCode.KeyExpiration, responseObject?.keyExpiry);
+                await _storedInfoRepository.UpsertByCodeAsync(StoredInfoCode.DeviceExpiration, responseObject?.deviceExpiry);
             }
         }
         else

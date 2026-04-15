@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Tikka.ServicesAustralia.Services;
+namespace Tikka.ServicesAustralia.Core.Services;
 
 public interface IAccessTokenService
 {

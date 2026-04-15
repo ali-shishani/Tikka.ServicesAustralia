@@ -1,13 +1,13 @@
 using System.Text;
-using Tikka.ServicesAustralia.Configs;
-using Tikka.ServicesAustralia.Middlewares;
-using Tikka.ServicesAustralia.Services;
+using Tikka.ServicesAustralia.Core.Configs;
+using Tikka.ServicesAustralia.Core.Middlewares;
+using Tikka.ServicesAustralia.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Tikka.ServicesAustralia;
+namespace Tikka.ServicesAustralia.Core;
 
 public static class ConfigRegister
 {
@@ -34,12 +34,6 @@ public static class ConfigRegister
                     ValidateAudience = false
                 };
             });
-
-
-        // Services Australia Device Configurations
-        ServicesAustraliaDeviceConfig saDeviceConfig = new();
-        configuration.GetSection("ServicesAustraliaDevice").Bind(saDeviceConfig);
-        services.AddSingleton(saDeviceConfig);
 
         return services;
     }

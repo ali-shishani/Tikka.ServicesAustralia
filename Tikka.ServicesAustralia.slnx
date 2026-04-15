@@ -4,5 +4,6 @@
   </Folder>
   <Project Path="AgedCareMicroservice.API/AgedCareMicroservice.API.csproj" />
   <Project Path="Auth.API/Auth.API.csproj" />
+  <Project Path="Tikka.ServicesAustralia.Core/Tikka.ServicesAustralia.Core.csproj" Id="57404bfe-a8ea-49ec-99d7-d97bba0d5e60" />
   <Project Path="Tikka.ServicesAustralia/Tikka.ServicesAustralia.csproj" />
 </Solution>

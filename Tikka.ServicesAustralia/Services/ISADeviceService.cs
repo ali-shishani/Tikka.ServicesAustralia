@@ -4,7 +4,7 @@ namespace Tikka.ServicesAustralia.Services;
 
 public interface ISADeviceService
 {
-    string GetDeviceInfo();
-    string Activate(string activationCode);
-    string RefreshKey();
+    Task<string> GetDeviceInfo();
+    Task<string> Activate(string activationCode);
+    Task<string> RefreshKey();
 }

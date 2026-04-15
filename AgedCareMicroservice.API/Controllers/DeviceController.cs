@@ -20,21 +20,21 @@ public class DeviceController : ControllerBase
     [HttpGet("GetInfo")]
     public async Task<ActionResult<List<string>>> GetInfo()
     {
-        var result = _deviceService.GetDeviceInfo();
+        var result = await _deviceService.GetDeviceInfo();
         return await Task.FromResult(Ok(result));
     }
 
     [HttpPut("Activate")]
     public async Task<ActionResult<string>>Activate(string activationCode)
     {
-        var resultLog = _deviceService.Activate(activationCode);
+        var resultLog = await _deviceService.Activate(activationCode);
         return await Task.FromResult(Ok(resultLog));
     }
 
     [HttpPut("RefreshKey")]
     public async Task<ActionResult<string>> RefreshKeyRefreshKey()
     {
-        var resultLog = _deviceService.RefreshKey();
+        var resultLog = await _deviceService.RefreshKey();
         return await Task.FromResult(Ok(resultLog));
     }
 }

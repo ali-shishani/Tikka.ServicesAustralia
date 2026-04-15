@@ -1,8 +1,8 @@
-using Tikka.ServicesAustralia.Services;
+using Tikka.ServicesAustralia.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Tikka.ServicesAustralia.Middlewares;
+namespace Tikka.ServicesAustralia.Core.Middlewares;
 
 public partial class JwtMiddleware(IAccessTokenService accessTokenService, ILogger<JwtMiddleware> logger) : IMiddleware
 {
