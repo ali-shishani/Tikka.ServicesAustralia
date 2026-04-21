@@ -1,6 +1,7 @@
 using System.Collections;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tikka.ServicesAustralia.Models.Responses;
 using Tikka.ServicesAustralia.Services;
 
 namespace MiniMicroservice.API.Controllers;
@@ -9,31 +10,32 @@ namespace MiniMicroservice.API.Controllers;
 [Route("api/[controller]"), ApiController]
 public class DataController : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IDataService _dataService;
 
-    public DataController(IAuthenticationService authenticationService)
+    public DataController(IDataService dataService)
     {
-        _authenticationService = authenticationService;
+        _dataService = dataService;
     }
 
-    [HttpGet("GetExampleData1")]
-    public async Task<ActionResult<string>> GetExampleData1(bool forceNewToken)
+    [HttpGet("CareRecipientSearch")]
+    public async Task<ActionResult<CareRecipientSearchResponse>> CareRecipientSearch(
+        string? careRecipientId, 
+        string? firstName, 
+        string? middleName, 
+        string? lastName, 
+        string? gender, 
+        string? birthDate, 
+        string? postCode, 
+        string? State)
     {
-        var (log,accessToken) = _authenticationService.GetAccessToken(forceNewToken);
-        return await Task.FromResult(Ok(log));
+        var result = _dataService.CareRecipientSearch(careRecipientId, firstName, middleName, lastName, gender, birthDate, postCode, State);
+        return await Task.FromResult(Ok(result));
     }
 
-    [HttpGet("GetExampleData2")]
-    public async Task<ActionResult<string>> GetExampleData2(bool forceNewToken)
+    [HttpGet("ResidentialCareEntryEvent")]
+    public async Task<ActionResult<ResidentialCareEntryEventResponse>> ResidentialCareEntryEvent()
     {
-        var (log, accessToken) = _authenticationService.GetAccessToken(forceNewToken);
-        return await Task.FromResult(Ok(log));
-    }
-
-    [HttpGet("GetExampleData3")]
-    public async Task<ActionResult<string>> GetExampleData3(bool forceNewToken)
-    {
-        var (log, accessToken) = _authenticationService.GetAccessToken(forceNewToken);
-        return await Task.FromResult(Ok(log));
+        var result = _dataService.ResidentialCareEntry();
+        return await Task.FromResult(Ok(result));
     }
 }

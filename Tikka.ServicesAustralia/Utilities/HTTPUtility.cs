@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http.Headers;
 using static System.Net.WebRequestMethods;
@@ -185,6 +186,90 @@ namespace Tikka.ServicesAustralia.Utilities
             }
 
             return responseData;
+        }
+
+        public async Task<string> executeCareRecipientSearch(string orgId, string deviceName, string productId, string accessToken,
+            string? careRecipientId,
+            string? firstName,
+            string? middleName,
+            string? lastName,
+            string? gender,
+            string? birthDate,
+            string? postCode,
+            string? State)
+        {
+            var responseBody = string.Empty;
+            var paramDictionary = new Dictionary<string, string?>();
+
+            paramDictionary.Add("careRecipientId", careRecipientId);
+            paramDictionary.Add("firstName", firstName);
+            paramDictionary.Add("middleName", middleName);
+            paramDictionary.Add("lastName", lastName);
+            paramDictionary.Add("gender", gender);
+            paramDictionary.Add("birthDate", birthDate);
+            paramDictionary.Add("postCode", postCode);
+            paramDictionary.Add("State", State);
+
+            //var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/care-recipients?";
+            var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/care-recipients/search/v2?";
+
+            var first = true;
+            paramDictionary.Where(kv => !string.IsNullOrWhiteSpace(kv.Value)).ToList().ForEach((kv) => {
+                Debug.WriteLine(kv.Key + ":" + kv.Value);
+
+                url += first ? "" : "&";
+                url += kv.Key + "=" + kv.Value;
+
+                first = false;
+            });
+
+            try
+            {
+                using var client = new HttpClient();
+                client.addStandardHeaders(orgId, deviceName, productId);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+                
+                //responseBody = await client.GetFromJsonAsync<string>(url);
+                var stream = await client.GetStreamAsync(url);
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    responseBody = reader.ReadToEnd();
+                }
+
+                //var request = HttpWebRequest.Create(url) as HttpWebRequest;
+                //request.Proxy = proxy;
+
+                //// build request headers
+                //addStandardHeaders(ref request, orgId, deviceName, productId);
+                //request.Method = "GET";
+                ////request.ContentType = "application/json";
+                //request.Accept = "application/json";
+                ////request.ContentLength = reqBodyBytes.Length;
+
+                //// The following Authorization header demonstrates how to use
+                //// a bearer token for authorisation.
+                //request.Headers.Add("Authorization", "Bearer " + accessToken);
+                ////request.Headers.Add("X-IBM-Client-Id", "3eb5ebd382f644fe50568e042787fce3");
+                //request.Headers.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+                
+                //using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                //{
+                //    // 3. Extract the response stream
+                //    using (Stream stream = response.GetResponseStream())
+                //    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                //    {
+                //        responseBody = reader.ReadToEnd();
+                //    }
+                //}
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return await Task.FromResult(responseBody);
         }
     }
 }

@@ -35,7 +35,8 @@ public static class ServiceRegister
         services.AddSingleton<ITokenService, TokenService>();
         services.AddScoped<ISADeviceService, SADeviceService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        
+        services.AddScoped<IDataService, DataService>();
+
         return services;
     }
 }
