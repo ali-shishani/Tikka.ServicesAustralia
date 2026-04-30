@@ -10,4 +10,7 @@ public class TikkaDbContext : DbContext
     }
 
     public virtual DbSet<StoredInfo> StoredInfos => Set<StoredInfo>();
+
+    public virtual DbSet<StagedCareRecipient> StagedCareRecipients => Set<StagedCareRecipient>();
+
 }

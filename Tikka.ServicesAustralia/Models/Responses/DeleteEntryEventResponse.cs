@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Tikka.ServicesAustralia.Models.Responses
 {
-    public class ResidentialCareEntryEventResponse
+    public class DeleteEntryEventResponse
     {
-        public string CareRecipientId { get; set; }
+        public List<MessageResponse> Messages { get; set; }
     }
 }

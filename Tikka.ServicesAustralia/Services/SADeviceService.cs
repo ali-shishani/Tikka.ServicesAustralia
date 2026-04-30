@@ -39,6 +39,9 @@ public class SADeviceService : ISADeviceService
              Environment.NewLine + "Product Id:" + _servicesAustraliaDeviceConfig.ProductId +
              Environment.NewLine + "Device Name:" + _servicesAustraliaDeviceConfig.DeviceName +
              Environment.NewLine + "Organisation RA:" + _servicesAustraliaDeviceConfig.OrganisationRA +
+             Environment.NewLine + "ServiceNapsId:" + _servicesAustraliaDeviceConfig.ServiceNapsId +
+             Environment.NewLine + "AgedCareResidentialServiceId:" + _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId +
+             Environment.NewLine + "AgedCareHomeServiceId:" + _servicesAustraliaDeviceConfig.AgedCareHomeServiceId +
              Environment.NewLine + "Token Audience:" + _servicesAustraliaDeviceConfig.TokenAud;
 
         var keyExpiration = await _storedInfoRepository.GetByCodeAsync(StoredInfoCode.KeyExpiration);

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Http.Headers;
+using Tikka.ServicesAustralia.Models.Requests;
 using static System.Net.WebRequestMethods;
 
 namespace Tikka.ServicesAustralia.Utilities
@@ -210,7 +213,6 @@ namespace Tikka.ServicesAustralia.Utilities
             paramDictionary.Add("postCode", postCode);
             paramDictionary.Add("State", State);
 
-            //var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/care-recipients?";
             var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/care-recipients/search/v2?";
 
             var first = true;
@@ -230,38 +232,238 @@ namespace Tikka.ServicesAustralia.Utilities
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
                 
-                //responseBody = await client.GetFromJsonAsync<string>(url);
                 var stream = await client.GetStreamAsync(url);
                 using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
                 {
                     responseBody = reader.ReadToEnd();
                 }
+            }
+            catch (Exception ex)
+            {
 
-                //var request = HttpWebRequest.Create(url) as HttpWebRequest;
-                //request.Proxy = proxy;
+                throw ex;
+            }
 
-                //// build request headers
-                //addStandardHeaders(ref request, orgId, deviceName, productId);
-                //request.Method = "GET";
-                ////request.ContentType = "application/json";
-                //request.Accept = "application/json";
-                ////request.ContentLength = reqBodyBytes.Length;
+            return await Task.FromResult(responseBody);
+        }
 
-                //// The following Authorization header demonstrates how to use
-                //// a bearer token for authorisation.
-                //request.Headers.Add("Authorization", "Bearer " + accessToken);
-                ////request.Headers.Add("X-IBM-Client-Id", "3eb5ebd382f644fe50568e042787fce3");
-                //request.Headers.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
-                
-                //using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        public async Task<string> executeQueryEntryEvents(string orgId, string deviceName, string productId, string accessToken,
+            string? serviceNapsId,
+            string? serviceId,
+            string? careRecipientId,
+            string? externalReferenceId,
+            string? entryDateFrom,
+            string? entryDateTo,
+            int limit,
+            string? page,
+            string? sort)
+        {
+            var responseBody = string.Empty;
+            var paramDictionary = new Dictionary<string, string?>();
+
+            paramDictionary.Add("serviceNapsId", serviceNapsId);
+            paramDictionary.Add("serviceId", serviceId);
+            paramDictionary.Add("careRecipientId", careRecipientId);
+            paramDictionary.Add("externalReferenceId", externalReferenceId);
+            paramDictionary.Add("entryDateFrom", entryDateFrom);
+            paramDictionary.Add("entryDateTo", entryDateTo);
+            paramDictionary.Add("limit", limit.ToString());
+            paramDictionary.Add("page", page);
+            paramDictionary.Add("sort", sort);
+
+            var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2?";
+
+            var first = true;
+            paramDictionary.Where(kv => !string.IsNullOrWhiteSpace(kv.Value)).ToList().ForEach((kv) => {
+                Debug.WriteLine(kv.Key + ":" + kv.Value);
+
+                url += first ? "" : "&";
+                url += kv.Key + "=" + kv.Value;
+
+                first = false;
+            });
+
+            try
+            {
+                using var client = new HttpClient();
+                client.addStandardHeaders(orgId, deviceName, productId);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+
+                var stream = await client.GetStreamAsync(url);
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    responseBody = reader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return await Task.FromResult(responseBody);
+        }
+
+        public async Task<string> executeGetEntryEventDetails(string orgId, string deviceName, string productId, string accessToken,
+            string? serviceNapsId,
+            string? serviceId,
+            string? eventId)
+        {
+            var responseBody = string.Empty;
+
+            var url = $"https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
+
+            try
+            {
+                using var client = new HttpClient();
+                client.addStandardHeaders(orgId, deviceName, productId);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+
+                var stream = await client.GetStreamAsync(url);
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    responseBody = reader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return await Task.FromResult(responseBody);
+        }
+
+        public async Task<string> executeCreateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+            CreateEntryEventRequest request,
+            string tempAccessKey,
+            string? serviceNapsId,
+            string? serviceId)
+        {
+            var responseBody = string.Empty;
+            var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2";
+
+            try
+            {
+                using var client = new HttpClient();
+                client.addStandardHeaders(orgId, deviceName, productId);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+                client.DefaultRequestHeaders.Add("temp-access-key", tempAccessKey);
+                client.DefaultRequestHeaders.Add("x-requested-with", "X");
+
+                client.DefaultRequestHeaders.Add("accept", "application/json");
+
+                var requestInput = request as CreateEntryEventRequestInput;
+                requestInput?.ServiceNapsId = serviceNapsId;
+
+                var response = await client.PostAsJsonAsync(url, requestInput);
+
+                //var content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+                //var response = await client.PostAsync(url, content);
+
+                //var requestInput = new
                 //{
-                //    // 3. Extract the response stream
-                //    using (Stream stream = response.GetResponseStream())
-                //    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                //    {
-                //        responseBody = reader.ReadToEnd();
-                //    }
-                //}
+                //    externalReferenceId = "PACE",
+                //    externalVersionNumber= "PACE",
+                //    serviceNapsId= "5678",
+                //    serviceId = "4040089223",
+                //    careRecipientId = "415115258",
+                //    entryTypeCode = "PERM_ENTRY",
+                //    receivingPriorCare = "N",
+                //    bondRolloverIndicator = "",
+                //    nsafBeenSighted = "Y",
+                //    agreedAccomodationPrice = 0,
+                //    accomPmntArrangementCode = "BTH",
+                //    accomPmntRadAmount = 0,
+                //    accomPmntDapAmount = 0,
+                //    palliativeOnEntry = "N",
+                //    entryDate= "2025-08-02",
+                //    pensionerStatusCode= "PART",
+                //    adjustedSubsidyIndicator= "N"
+                //};
+
+                //var response = await client.PostAsJsonAsync(url, requestInput);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseBody = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return await Task.FromResult(responseBody);
+        }
+
+        public async Task<string> executeUpdateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+            string? eventId,
+            UpdateEntryEventRequest request,
+            string? serviceNapsId,
+            string? serviceId)
+        {
+            var responseBody = string.Empty;
+            var url = $"https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
+
+            try
+            {
+                using var client = new HttpClient();
+                client.addStandardHeaders(orgId, deviceName, productId);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+                client.DefaultRequestHeaders.Add("x-requested-with", "X");
+
+                var requestInput = request as UpdateEntryEventRequestInput;
+                requestInput?.ServiceNapsId = serviceNapsId;
+
+                var response = await client.PutAsJsonAsync(url, request);
+                if (response.IsSuccessStatusCode)
+                {
+                    responseBody = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return await Task.FromResult(responseBody);
+        }
+
+        public async Task<string> executeDeleteEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+            string? serviceNapsId,
+            string? serviceId,
+            string? eventId)
+        {
+            var responseBody = string.Empty;
+
+            var url = $"https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
+
+            try
+            {
+                using var client = new HttpClient();
+                client.addStandardHeaders(orgId, deviceName, productId);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+                client.DefaultRequestHeaders.Add("x-requested-with", "X");
+
+                //client.DefaultRequestHeaders.Add("etag", "000010");
+                //client.DefaultRequestHeaders.IfMatch.Add(new EntityTagHeaderValue("\"000010\""));
+                //client.DefaultRequestHeaders.IfMatch.Add(EntityTagHeaderValue.Any);
+                client.DefaultRequestHeaders.Add("if-match", "*");
+
+
+                var response = await client.DeleteAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    responseBody = await response.Content.ReadAsStringAsync();
+                }
             }
             catch (Exception ex)
             {

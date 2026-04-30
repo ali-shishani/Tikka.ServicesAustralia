@@ -14,6 +14,12 @@ namespace Tikka.ServicesAustralia.Core.Configs
 
         public string OrganisationRA { get; set; } = string.Empty;
 
+        public string ServiceNapsId { get; set; } = string.Empty;
+
+        public string AgedCareResidentialServiceId { get; set; } = string.Empty;
+
+        public string AgedCareHomeServiceId { get; set; } = string.Empty;
+
         public string TokenAud { get; set; } = string.Empty;
     }
 }
