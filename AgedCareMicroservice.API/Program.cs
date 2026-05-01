@@ -58,8 +58,9 @@ else
 
 app.UseHttpsRedirection();
 
-// Tikka Jwt Middleware
+// Tikka Middlewares
 //app.UseMiddleware<JwtMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthorization();
 

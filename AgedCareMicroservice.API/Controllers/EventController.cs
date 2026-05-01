@@ -20,7 +20,7 @@ public class EventController : ControllerBase
         _dataService = dataService;
     }
 
-    [HttpGet("QueryEntryEvents")]
+    [HttpGet("QueryResidentialEntryEvents")]
     public async Task<ActionResult<List<QueryEntryEventsResponse>>> QueryEntryEvents(
         string? careRecipientId,
         string? externalReferenceId,
@@ -30,8 +30,21 @@ public class EventController : ControllerBase
         string? page,
         string? sort)
     {
+        var result = await _dataService.QueryResidentialEntryEvents(careRecipientId, externalReferenceId, entryDateFrom, entryDateTo, limit, page, sort);
+        return await Task.FromResult(Ok(result));
+    }
 
-        var result = await _dataService.QueryEntryEvents(careRecipientId, externalReferenceId, entryDateFrom, entryDateTo, limit, page, sort);
+    [HttpGet("QueryHomeEntryEvents")]
+    public async Task<ActionResult<List<QueryEntryEventsResponse>>> QueryHomeEntryEvents(
+        string? careRecipientId,
+        string? externalReferenceId,
+        string? entryDateFrom,
+        string? entryDateTo,
+        int limit,
+        string? page,
+        string? sort)
+    {
+        var result = await _dataService.QueryHomeEntryEvents(careRecipientId, externalReferenceId, entryDateFrom, entryDateTo, limit, page, sort);
         return await Task.FromResult(Ok(result));
     }
 

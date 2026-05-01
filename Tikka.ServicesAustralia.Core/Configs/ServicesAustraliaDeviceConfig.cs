@@ -21,5 +21,7 @@ namespace Tikka.ServicesAustralia.Core.Configs
         public string AgedCareHomeServiceId { get; set; } = string.Empty;
 
         public string TokenAud { get; set; } = string.Empty;
+
+        public string BaseUrl { get; set; } = string.Empty;
     }
 }

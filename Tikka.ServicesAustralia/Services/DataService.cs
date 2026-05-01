@@ -52,6 +52,7 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
             accessToken,
+            _servicesAustraliaDeviceConfig.BaseUrl,
             careRecipientId,
             firstName,
             middleName,
@@ -95,7 +96,7 @@ public class DataService : IDataService
         return await Task.FromResult(result);
     }
 
-    public async Task<List<QueryEntryEventsResponse>> QueryEntryEvents(
+    public async Task<List<QueryEntryEventsResponse>> QueryResidentialEntryEvents(
             string? careRecipientId,
             string? externalReferenceId,
             string? entryDateFrom,
@@ -114,8 +115,45 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
             accessToken,
+            _servicesAustraliaDeviceConfig.BaseUrl,
             _servicesAustraliaDeviceConfig.ServiceNapsId,
             _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId,
+            careRecipientId,
+            externalReferenceId,
+            entryDateFrom,
+            entryDateTo,
+            limit,
+            page,
+            sort);
+
+            result = JsonConvert.DeserializeObject<List<QueryEntryEventsResponse>>(response);
+        }
+
+        return await Task.FromResult(result);
+    }
+
+    public async Task<List<QueryEntryEventsResponse>> QueryHomeEntryEvents(
+            string? careRecipientId,
+            string? externalReferenceId,
+            string? entryDateFrom,
+            string? entryDateTo,
+            int limit,
+            string? page,
+            string? sort)
+    {
+        var result = new List<QueryEntryEventsResponse>();
+
+        var (log, accessToken) = _authenticationService.GetAccessToken(false);
+        if (!string.IsNullOrWhiteSpace(accessToken))
+        {
+            var response = await httpUtil.executeQueryEntryEvents(
+            _servicesAustraliaDeviceConfig.OrganisationRA,
+            _servicesAustraliaDeviceConfig.DeviceName,
+            _servicesAustraliaDeviceConfig.ProductId,
+            accessToken,
+            _servicesAustraliaDeviceConfig.BaseUrl,
+            _servicesAustraliaDeviceConfig.ServiceNapsId,
+            _servicesAustraliaDeviceConfig.AgedCareHomeServiceId,
             careRecipientId,
             externalReferenceId,
             entryDateFrom,
@@ -142,6 +180,7 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
             accessToken,
+            _servicesAustraliaDeviceConfig.BaseUrl,
             _servicesAustraliaDeviceConfig.ServiceNapsId,
             _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId,
             eventId);
@@ -164,6 +203,7 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
             accessToken,
+            _servicesAustraliaDeviceConfig.BaseUrl,
             request,
             tempAccessKey,
             _servicesAustraliaDeviceConfig.ServiceNapsId,
@@ -186,6 +226,7 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
             accessToken,
+            _servicesAustraliaDeviceConfig.BaseUrl,
             eventId,
             request,
             _servicesAustraliaDeviceConfig.ServiceNapsId,
@@ -208,6 +249,7 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
             accessToken,
+            _servicesAustraliaDeviceConfig.BaseUrl,
             _servicesAustraliaDeviceConfig.ServiceNapsId,
             _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId,
             eventId);

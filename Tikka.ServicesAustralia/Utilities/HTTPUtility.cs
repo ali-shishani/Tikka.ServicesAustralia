@@ -192,6 +192,7 @@ namespace Tikka.ServicesAustralia.Utilities
         }
 
         public async Task<string> executeCareRecipientSearch(string orgId, string deviceName, string productId, string accessToken,
+            string? baseUrl,
             string? careRecipientId,
             string? firstName,
             string? middleName,
@@ -213,7 +214,7 @@ namespace Tikka.ServicesAustralia.Utilities
             paramDictionary.Add("postCode", postCode);
             paramDictionary.Add("State", State);
 
-            var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/care-recipients/search/v2?";
+            var url = $"{baseUrl}/claiming/ext-vnd/acws/care-recipients/search/v2?";
 
             var first = true;
             paramDictionary.Where(kv => !string.IsNullOrWhiteSpace(kv.Value)).ToList().ForEach((kv) => {
@@ -248,6 +249,7 @@ namespace Tikka.ServicesAustralia.Utilities
         }
 
         public async Task<string> executeQueryEntryEvents(string orgId, string deviceName, string productId, string accessToken,
+            string? baseUrl,
             string? serviceNapsId,
             string? serviceId,
             string? careRecipientId,
@@ -271,7 +273,7 @@ namespace Tikka.ServicesAustralia.Utilities
             paramDictionary.Add("page", page);
             paramDictionary.Add("sort", sort);
 
-            var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2?";
+            var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2?";
 
             var first = true;
             paramDictionary.Where(kv => !string.IsNullOrWhiteSpace(kv.Value)).ToList().ForEach((kv) => {
@@ -306,13 +308,14 @@ namespace Tikka.ServicesAustralia.Utilities
         }
 
         public async Task<string> executeGetEntryEventDetails(string orgId, string deviceName, string productId, string accessToken,
+            string? baseUrl,
             string? serviceNapsId,
             string? serviceId,
             string? eventId)
         {
             var responseBody = string.Empty;
 
-            var url = $"https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
+            var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
 
             try
             {
@@ -337,13 +340,14 @@ namespace Tikka.ServicesAustralia.Utilities
         }
 
         public async Task<string> executeCreateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+            string? baseUrl,
             CreateEntryEventRequest request,
             string tempAccessKey,
             string? serviceNapsId,
             string? serviceId)
         {
             var responseBody = string.Empty;
-            var url = "https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2";
+            var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2";
 
             try
             {
@@ -402,13 +406,14 @@ namespace Tikka.ServicesAustralia.Utilities
         }
 
         public async Task<string> executeUpdateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+            string? baseUrl,
             string? eventId,
             UpdateEntryEventRequest request,
             string? serviceNapsId,
             string? serviceId)
         {
             var responseBody = string.Empty;
-            var url = $"https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
+            var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
 
             try
             {
@@ -437,13 +442,14 @@ namespace Tikka.ServicesAustralia.Utilities
         }
 
         public async Task<string> executeDeleteEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+            string? baseUrl,
             string? serviceNapsId,
             string? serviceId,
             string? eventId)
         {
             var responseBody = string.Empty;
 
-            var url = $"https://test.healthclaiming.api.humanservices.gov.au/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
+            var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
 
             try
             {
