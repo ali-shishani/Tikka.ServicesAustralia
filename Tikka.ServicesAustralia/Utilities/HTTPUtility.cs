@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Http.Headers;
+using Newtonsoft.Json;
 using Tikka.ServicesAustralia.Models.Requests;
 using static System.Net.WebRequestMethods;
 
@@ -232,12 +233,9 @@ namespace Tikka.ServicesAustralia.Utilities
                 client.addStandardHeaders(orgId, deviceName, productId);
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
-                
-                var stream = await client.GetStreamAsync(url);
-                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                {
-                    responseBody = reader.ReadToEnd();
-                }
+
+                var response = await client.GetAsync(url);
+                responseBody = await response.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {
@@ -292,11 +290,8 @@ namespace Tikka.ServicesAustralia.Utilities
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
 
-                var stream = await client.GetStreamAsync(url);
-                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                {
-                    responseBody = reader.ReadToEnd();
-                }
+                var response = await client.GetAsync(url);
+                responseBody = await response.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {
@@ -323,12 +318,12 @@ namespace Tikka.ServicesAustralia.Utilities
                 client.addStandardHeaders(orgId, deviceName, productId);
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+                
+                
+                var response = await client.GetAsync(url);
+                responseBody = await response.Content.ReadAsStringAsync();
 
-                var stream = await client.GetStreamAsync(url);
-                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                {
-                    responseBody = reader.ReadToEnd();
-                }
+                response.Headers.TryGetValues("etag", out var etagValues);
             }
             catch (Exception ex)
             {
@@ -339,7 +334,7 @@ namespace Tikka.ServicesAustralia.Utilities
             return await Task.FromResult(responseBody);
         }
 
-        public async Task<string> executeCreateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+        public async Task<(string response, string etag)> executeCreateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
             string? baseUrl,
             CreateEntryEventRequest request,
             string tempAccessKey,
@@ -347,6 +342,7 @@ namespace Tikka.ServicesAustralia.Utilities
             string? serviceId)
         {
             var responseBody = string.Empty;
+            var etag = string.Empty;
             var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2";
 
             try
@@ -357,42 +353,49 @@ namespace Tikka.ServicesAustralia.Utilities
                 client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
                 client.DefaultRequestHeaders.Add("temp-access-key", tempAccessKey);
                 client.DefaultRequestHeaders.Add("x-requested-with", "X");
-
                 client.DefaultRequestHeaders.Add("accept", "application/json");
 
-                var requestInput = request as CreateEntryEventRequestInput;
-                requestInput?.ServiceNapsId = serviceNapsId;
-
-                var response = await client.PostAsJsonAsync(url, requestInput);
-
-                //var content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
-                //var response = await client.PostAsync(url, content);
-
-                //var requestInput = new
-                //{
-                //    externalReferenceId = "PACE",
-                //    externalVersionNumber= "PACE",
-                //    serviceNapsId= "5678",
-                //    serviceId = "4040089223",
-                //    careRecipientId = "415115258",
-                //    entryTypeCode = "PERM_ENTRY",
-                //    receivingPriorCare = "N",
-                //    bondRolloverIndicator = "",
-                //    nsafBeenSighted = "Y",
-                //    agreedAccomodationPrice = 0,
-                //    accomPmntArrangementCode = "BTH",
-                //    accomPmntRadAmount = 0,
-                //    accomPmntDapAmount = 0,
-                //    palliativeOnEntry = "N",
-                //    entryDate= "2025-08-02",
-                //    pensionerStatusCode= "PART",
-                //    adjustedSubsidyIndicator= "N"
-                //};
+                //var requestInput = JsonConvert.DeserializeObject<CreateEntryEventRequestInput>(JsonConvert.SerializeObject(request));
+                //requestInput?.ServiceNapsId = serviceNapsId;
+                //requestInput?.ServiceId = serviceId;
 
                 //var response = await client.PostAsJsonAsync(url, requestInput);
+                //response.Headers.TryGetValues("etag", out var etagValues);
 
+
+                //var requestInput = JsonConvert.DeserializeObject<CreateEntryEventRequestInput>(JsonConvert.SerializeObject(request));
+                //requestInput?.ServiceNapsId = serviceNapsId;
+                //requestInput?.ServiceId = serviceId;
+
+                //var content = new StringContent(JsonConvert.SerializeObject(requestInput, Formatting.Indented), Encoding.UTF8, "application/json");
+                //var response = await client.PostAsync(url, content);
+
+                var requestInput = new
+                {
+                    externalReferenceId = request.ExternalReferenceId,
+                    externalVersionNumber = request.ExternalVersionNumber,
+                    serviceNapsId = serviceNapsId,
+                    serviceId = serviceId,
+                    careRecipientId = request.CareRecipientId,
+                    entryTypeCode = request.EntryTypeCode,
+                    receivingPriorCare = request.ReceivingPriorCare,
+                    bondRolloverIndicator = request.BondRolloverIndicator,
+                    nsafBeenSighted = request.NsafBeenSighted,
+                    agreedAccomodationPrice = request.AgreedAccomodationPrice,
+                    accomPmntArrangementCode = request.AccomPmntArrangementCode,
+                    accomPmntRadAmount = request.AccomPmntRadAmount,
+                    accomPmntDapAmount = request.AccomPmntDapAmount,
+                    palliativeOnEntry = request.PalliativeOnEntry,
+                    entryDate = request.EntryDate,
+                    pensionerStatusCode = request.PensionerStatusCode,
+                    adjustedSubsidyIndicator = request.AdjustedSubsidyIndicator
+                };
+
+                var response = await client.PostAsJsonAsync(url, requestInput);
                 if (response.IsSuccessStatusCode)
                 {
+                    response.Headers.TryGetValues("etag", out var etagValues);
+                    etag = etagValues != null && etagValues.Any() ? etagValues.First() : string.Empty;
                     responseBody = await response.Content.ReadAsStringAsync();
                 }
             }
@@ -402,7 +405,7 @@ namespace Tikka.ServicesAustralia.Utilities
                 throw ex;
             }
 
-            return await Task.FromResult(responseBody);
+            return await Task.FromResult((responseBody, etag));
         }
 
         public async Task<string> executeUpdateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
@@ -445,7 +448,8 @@ namespace Tikka.ServicesAustralia.Utilities
             string? baseUrl,
             string? serviceNapsId,
             string? serviceId,
-            string? eventId)
+            string? eventId,
+            string? etag)
         {
             var responseBody = string.Empty;
 
@@ -458,17 +462,44 @@ namespace Tikka.ServicesAustralia.Utilities
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
                 client.DefaultRequestHeaders.Add("x-requested-with", "X");
-
-                //client.DefaultRequestHeaders.Add("etag", "000010");
-                //client.DefaultRequestHeaders.IfMatch.Add(new EntityTagHeaderValue("\"000010\""));
-                //client.DefaultRequestHeaders.IfMatch.Add(EntityTagHeaderValue.Any);
-                client.DefaultRequestHeaders.Add("if-match", "*");
-
+                client.DefaultRequestHeaders.Add("if-match", etag);
 
                 var response = await client.DeleteAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
                     responseBody = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return await Task.FromResult(responseBody);
+        }
+
+        public async Task<string> executeEntryEventHistory(string orgId, string deviceName, string productId, string accessToken,
+            string? baseUrl,
+            string? serviceNapsId,
+            string? serviceId,
+            string? eventId)
+        {
+            var responseBody = string.Empty;
+
+            var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}/versions";
+
+            try
+            {
+                using var client = new HttpClient();
+                client.addStandardHeaders(orgId, deviceName, productId);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
+
+                var stream = await client.GetStreamAsync(url);
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    responseBody = reader.ReadToEnd();
                 }
             }
             catch (Exception ex)

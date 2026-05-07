@@ -75,4 +75,11 @@ public class EventController : ControllerBase
         var result = await _dataService.DeleteEntryEvent(eventId);
         return await Task.FromResult(Ok(result));
     }
+
+    [HttpGet("EntryEventHistory/{eventId}")]
+    public async Task<ActionResult<EntryEventHistoryResponse>> EntryEventHistory(string? eventId)
+    {
+        var result = await _dataService.EntryEventHistory(eventId);
+        return await Task.FromResult(Ok(result));
+    }
 }

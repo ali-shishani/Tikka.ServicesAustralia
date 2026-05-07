@@ -31,6 +31,7 @@ public static class ServiceRegister
         // Repositories
         services.AddScoped<IStoredInfoRepository, StoredInfoRepository>();
         services.AddScoped<IStagedCareRecipientRepository, StagedCareRecipientRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
 
         // Services
         services.AddSingleton<ITokenService, TokenService>();

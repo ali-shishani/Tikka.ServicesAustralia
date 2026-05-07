@@ -16,6 +16,8 @@ public class DataService : IDataService
 
     private IStagedCareRecipientRepository _stagedCareRecipientRepository { get; set; }
 
+    private IEventRepository _eventRepository { get; set; }
+
     private IAuthenticationService _authenticationService { get; set; }
 
     private HTTPUtility httpUtil { get; set; } = new HTTPUtility(string.Empty, string.Empty, string.Empty);
@@ -23,11 +25,13 @@ public class DataService : IDataService
     public DataService(
         ServicesAustraliaDeviceConfig servicesAustraliaDeviceConfig,
         IStagedCareRecipientRepository stagedCareRecipientRepository,
+        IEventRepository eventRepository,
         IAuthenticationService authenticationService
         )
     {
         _servicesAustraliaDeviceConfig = servicesAustraliaDeviceConfig;
         _stagedCareRecipientRepository = stagedCareRecipientRepository;
+        _eventRepository = eventRepository;
         _authenticationService = authenticationService;
     }
 
@@ -74,7 +78,7 @@ public class DataService : IDataService
                         FirstName = result.FirstName,
                         MiddleName = result.MiddleName,
                         LastName = result.LastName,
-                        Gender  = result.Gender,
+                        Gender = result.Gender,
                         BirthDate = result.BirthDate,
                         TempAccessKey = result.TempAccessKey,
                         TempAccessExpiry = result.TempAccessExpiry,
@@ -198,7 +202,7 @@ public class DataService : IDataService
         var (log, accessToken) = _authenticationService.GetAccessToken(false);
         if (!string.IsNullOrWhiteSpace(accessToken))
         {
-            var response = await httpUtil.executeCreateEntryEvent(
+            var (response, etag) = await httpUtil.executeCreateEntryEvent(
             _servicesAustraliaDeviceConfig.OrganisationRA,
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
@@ -209,6 +213,13 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.ServiceNapsId,
             _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId);
             result = JsonConvert.DeserializeObject<CreateEntryEventResponse>(response);
+
+            // save the event to the database
+            if (result != null)
+            {
+                await _eventRepository.AddRecordAsync(new Event() { CareRecipientId = request.CareRecipientId, EventId = result.EventId, Etag = etag });
+                await _eventRepository.SaveChangesAsync();
+            }
         }
 
         return await Task.FromResult(result);
@@ -244,7 +255,44 @@ public class DataService : IDataService
         var (log, accessToken) = _authenticationService.GetAccessToken(false);
         if (!string.IsNullOrWhiteSpace(accessToken))
         {
-            var response = await httpUtil.executeDeleteEntryEvent(
+            // get the etag
+            var record = await _eventRepository.GetByEventIdAsync(eventId);
+            if (record != null)
+            {
+
+                var response = await httpUtil.executeDeleteEntryEvent(
+                _servicesAustraliaDeviceConfig.OrganisationRA,
+                _servicesAustraliaDeviceConfig.DeviceName,
+                _servicesAustraliaDeviceConfig.ProductId,
+                accessToken,
+                _servicesAustraliaDeviceConfig.BaseUrl,
+                _servicesAustraliaDeviceConfig.ServiceNapsId,
+                _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId,
+                eventId,
+                record.Etag);
+
+                result = JsonConvert.DeserializeObject<DeleteEntryEventResponse>(response);
+
+                // delete the event in the database
+                if (result != null)
+                {
+                    await _eventRepository.DeleteByEventIdAsync(eventId);
+                    await _eventRepository.SaveChangesAsync();
+                }
+            }
+        }
+
+        return await Task.FromResult(result);
+    }
+
+    public async Task<List<EntryEventHistoryResponse>> EntryEventHistory(string? eventId)
+    {
+        var result = new List<EntryEventHistoryResponse>();
+
+        var (log, accessToken) = _authenticationService.GetAccessToken(false);
+        if (!string.IsNullOrWhiteSpace(accessToken))
+        {
+            var response = await httpUtil.executeEntryEventHistory(
             _servicesAustraliaDeviceConfig.OrganisationRA,
             _servicesAustraliaDeviceConfig.DeviceName,
             _servicesAustraliaDeviceConfig.ProductId,
@@ -254,7 +302,7 @@ public class DataService : IDataService
             _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId,
             eventId);
 
-            result = JsonConvert.DeserializeObject<DeleteEntryEventResponse>(response);
+            result = JsonConvert.DeserializeObject<List<EntryEventHistoryResponse>>(response);
         }
 
         return await Task.FromResult(result);

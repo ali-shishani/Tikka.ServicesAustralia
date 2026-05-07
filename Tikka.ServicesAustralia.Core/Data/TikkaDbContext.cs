@@ -13,4 +13,6 @@ public class TikkaDbContext : DbContext
 
     public virtual DbSet<StagedCareRecipient> StagedCareRecipients => Set<StagedCareRecipient>();
 
+    public virtual DbSet<Event> Events => Set<Event>();
+
 }

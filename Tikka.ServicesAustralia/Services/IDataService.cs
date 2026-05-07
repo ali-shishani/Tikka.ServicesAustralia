@@ -13,4 +13,5 @@ public interface IDataService
     Task<CreateEntryEventResponse> CreateEntryEvent(string tempAccessKey, CreateEntryEventRequest request);
     Task<UpdateEntryEventResponse> UpdateEntryEvent(string? eventId, UpdateEntryEventRequest request);
     Task<DeleteEntryEventResponse> DeleteEntryEvent(string? eventId);
+    Task<List<EntryEventHistoryResponse>> EntryEventHistory(string? eventId);
 }

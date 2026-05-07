@@ -7,5 +7,7 @@ namespace Tikka.ServicesAustralia.Models.Requests
     public class CreateEntryEventRequestInput: CreateEntryEventRequest
     {
         public string? ServiceNapsId { get; set; }
+
+        public string? ServiceId { get; set; }
     }
 }
