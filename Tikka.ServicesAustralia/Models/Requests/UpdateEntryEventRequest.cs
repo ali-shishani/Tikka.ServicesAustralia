@@ -48,7 +48,7 @@ namespace Tikka.ServicesAustralia.Models.Requests
 
         public string? NsafBeenSighted { get; set; }
 
-        public string? AgreedAccomodationPrice { get; set; }
+        public int AgreedAccomodationPrice { get; set; }
 
         public string? AccommodationAgreementDate { get; set; }
 

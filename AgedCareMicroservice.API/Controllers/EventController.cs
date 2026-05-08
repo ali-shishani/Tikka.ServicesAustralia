@@ -63,7 +63,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPut("UpdateEntryEvent/{eventId}")]
-    public async Task<ActionResult<UpdateEntryEventResponse>> UpdateEntryEvent(string? eventId, UpdateEntryEventRequest request)
+    public async Task<ActionResult<bool>> UpdateEntryEvent(string? eventId, UpdateEntryEventRequest request)
     {
         var result = await _dataService.UpdateEntryEvent(eventId, request);
         return await Task.FromResult(Ok(result));

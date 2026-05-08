@@ -21,6 +21,13 @@ public class EventRepository : IEventRepository
         return record;
     }
 
+    public async Task<Event> UpdateRecordAsync(Event record)
+    {
+        _tikkaDbContext.Events.Update(record);
+        await _tikkaDbContext.SaveChangesAsync();
+        return record;
+    }
+
     public async Task<Event?> GetByIdAsync(Guid id)
     {
         return await _tikkaDbContext.Events

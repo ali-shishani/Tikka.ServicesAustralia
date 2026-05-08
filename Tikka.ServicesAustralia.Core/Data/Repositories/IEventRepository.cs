@@ -6,6 +6,7 @@ namespace Tikka.ServicesAustralia.Core.Data.Repositories;
 public interface IEventRepository
 {
     Task<Event> AddRecordAsync(Event record);
+    Task<Event> UpdateRecordAsync(Event record);
     Task<Event?> GetByIdAsync(Guid id);
     Task<Event?> GetByEventIdAsync(string id);
     Task<Event?> GetByCareRicipientIdAsync(string id);

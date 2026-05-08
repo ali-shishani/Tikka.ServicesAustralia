@@ -11,7 +11,7 @@ public interface IDataService
     Task<List<QueryEntryEventsResponse>> QueryHomeEntryEvents(string? careRecipientId, string? externalReferenceId, string? entryDateFrom, string? entryDateTo, int limit, string? page, string? sort);
     Task<GetEntryEventDetailsResponse> GetEntryEventDetails(string? eventId);
     Task<CreateEntryEventResponse> CreateEntryEvent(string tempAccessKey, CreateEntryEventRequest request);
-    Task<UpdateEntryEventResponse> UpdateEntryEvent(string? eventId, UpdateEntryEventRequest request);
+    Task<bool> UpdateEntryEvent(string? eventId, UpdateEntryEventRequest request);
     Task<DeleteEntryEventResponse> DeleteEntryEvent(string? eventId);
     Task<List<EntryEventHistoryResponse>> EntryEventHistory(string? eventId);
 }

@@ -408,14 +408,16 @@ namespace Tikka.ServicesAustralia.Utilities
             return await Task.FromResult((responseBody, etag));
         }
 
-        public async Task<string> executeUpdateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
+        public async Task<(bool isSuccessful, string etag)> executeUpdateEntryEvent(string orgId, string deviceName, string productId, string accessToken,
             string? baseUrl,
             string? eventId,
+            string? etag,
             UpdateEntryEventRequest request,
             string? serviceNapsId,
             string? serviceId)
         {
-            var responseBody = string.Empty;
+            var isSuccessful = false;
+            var newEtag = string.Empty;
             var url = $"{baseUrl}/claiming/ext-vnd/acws/residential-care/events/entry/v2/{eventId}";
 
             try
@@ -425,23 +427,53 @@ namespace Tikka.ServicesAustralia.Utilities
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("X-IBM-Client-Id", "3eb5ebd382f844fe50568e042787fcc3");
                 client.DefaultRequestHeaders.Add("x-requested-with", "X");
+                client.DefaultRequestHeaders.Add("if-match", etag);
 
-                var requestInput = request as UpdateEntryEventRequestInput;
-                requestInput?.ServiceNapsId = serviceNapsId;
+                //var requestInput = request as UpdateEntryEventRequestInput;
+                //requestInput?.ServiceNapsId = serviceNapsId;
 
-                var response = await client.PutAsJsonAsync(url, request);
+                //var response = await client.PutAsJsonAsync(url, request);
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    response.Headers.TryGetValues("etag", out var etagValues);
+                //    newEtag = etagValues != null && etagValues.Any() ? etagValues.First() : string.Empty;
+                //    responseBody = await response.Content.ReadAsStringAsync();
+                //}
+
+                var requestInput = new
+                {
+                    externalReferenceId = request.ExternalReferenceId,
+                    externalVersionNumber = request.ExternalVersionNumber,
+                    serviceNapsId = serviceNapsId,
+                    serviceId = serviceId,
+                    careRecipientId = request.CareRecipientId,
+                    entryTypeCode = request.EntryTypeCode,
+                    receivingPriorCare = request.ReceivingPriorCare,
+                    bondRolloverIndicator = request.BondRolloverIndicator,
+                    nsafBeenSighted = request.NsafBeenSighted,
+                    agreedAccomodationPrice = request.AgreedAccomodationPrice,
+                    accomPmntArrangementCode = request.AccomPmntArrangementCode,
+                    accomPmntRadAmount = request.AccomPmntRadAmount,
+                    accomPmntDapAmount = request.AccomPmntDapAmount,
+                    entryDate = request.EntryDate,
+                    pensionerStatusCode = request.PensionerStatusCode,
+                    adjustedSubsidyIndicator = request.AdjustedSubsidyIndicator
+                };
+
+                var response = await client.PutAsJsonAsync(url, requestInput);
                 if (response.IsSuccessStatusCode)
                 {
-                    responseBody = await response.Content.ReadAsStringAsync();
+                    response.Headers.TryGetValues("etag", out var etagValues);
+                    newEtag = etagValues != null && etagValues.Any() ? etagValues.First() : string.Empty;
+                    isSuccessful = true;
                 }
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
 
-            return await Task.FromResult(responseBody);
+            return await Task.FromResult((isSuccessful, newEtag));
         }
 
         public async Task<string> executeDeleteEntryEvent(string orgId, string deviceName, string productId, string accessToken,

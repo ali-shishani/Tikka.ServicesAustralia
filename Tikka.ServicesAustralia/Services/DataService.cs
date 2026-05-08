@@ -218,34 +218,46 @@ public class DataService : IDataService
             if (result != null)
             {
                 await _eventRepository.AddRecordAsync(new Event() { CareRecipientId = request.CareRecipientId, EventId = result.EventId, Etag = etag });
-                await _eventRepository.SaveChangesAsync();
             }
         }
 
         return await Task.FromResult(result);
     }
 
-    public async Task<UpdateEntryEventResponse> UpdateEntryEvent(string? eventId, UpdateEntryEventRequest request)
+    public async Task<bool> UpdateEntryEvent(string? eventId, UpdateEntryEventRequest request)
     {
-        var result = new UpdateEntryEventResponse();
+        var isSuccessful = false;
 
         var (log, accessToken) = _authenticationService.GetAccessToken(false);
         if (!string.IsNullOrWhiteSpace(accessToken))
         {
-            var response = await httpUtil.executeUpdateEntryEvent(
-            _servicesAustraliaDeviceConfig.OrganisationRA,
-            _servicesAustraliaDeviceConfig.DeviceName,
-            _servicesAustraliaDeviceConfig.ProductId,
-            accessToken,
-            _servicesAustraliaDeviceConfig.BaseUrl,
-            eventId,
-            request,
-            _servicesAustraliaDeviceConfig.ServiceNapsId,
-            _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId);
-            result = JsonConvert.DeserializeObject<UpdateEntryEventResponse>(response);
+            // get the etag
+            var record = await _eventRepository.GetByEventIdAsync(eventId);
+            if (record != null)
+            {
+                var (success, etag) = await httpUtil.executeUpdateEntryEvent(
+                            _servicesAustraliaDeviceConfig.OrganisationRA,
+                            _servicesAustraliaDeviceConfig.DeviceName,
+                            _servicesAustraliaDeviceConfig.ProductId,
+                            accessToken,
+                            _servicesAustraliaDeviceConfig.BaseUrl,
+                            eventId,
+                            record.Etag,
+                            request,
+                            _servicesAustraliaDeviceConfig.ServiceNapsId,
+                            _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId);
+
+                // update event etag in the database
+                if (success)
+                {
+                    record.Etag = etag;
+                    await _eventRepository.UpdateRecordAsync(record);
+                    isSuccessful = true;
+                }
+            }
         }
 
-        return await Task.FromResult(result);
+        return await Task.FromResult(isSuccessful);
     }
 
     public async Task<DeleteEntryEventResponse> DeleteEntryEvent(string? eventId)
