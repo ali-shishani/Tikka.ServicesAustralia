@@ -28,9 +28,13 @@ public class ExceptionMiddleware(
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
+            //var response = env.IsDevelopment()
+            //    ? new AppException(context.Response.StatusCode, ex.Message, ex.StackTrace)
+            //    : new AppException(context.Response.StatusCode, ex.Message, "Internal server error");
+
             var response = env.IsDevelopment()
-                ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace)
-                : new ApiException(context.Response.StatusCode, ex.Message, "Internal server error");
+                ? ApiResponse<object>.FailureResponse(context.Response.StatusCode, [new AppException(ex.Message, ex.StackTrace)])
+                : ApiResponse<object>.FailureResponse(context.Response.StatusCode, [new AppException(ex.Message, "Internal server error")]);
 
             var options = new JsonSerializerOptions
             {

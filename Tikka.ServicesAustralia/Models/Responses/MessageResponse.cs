@@ -6,10 +6,10 @@ namespace Tikka.ServicesAustralia.Models.Responses
 {
     public class MessageResponse
     {
-        public string? Type { get; set; }
+        public int Code { get; set; }
 
-        public string? ShortText { get; set; }
+        public string CodeType { get; set; }
 
-        public string? LongText { get; set; }
+        public string Message { get; set; }
     }
 }

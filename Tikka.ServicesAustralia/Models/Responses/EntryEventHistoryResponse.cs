@@ -50,7 +50,7 @@ namespace Tikka.ServicesAustralia.Models.Responses
 
         public string? nsafBeenSighted { get; set; }
 
-        public string? agreedAccomodationPrice { get; set; }
+        public int agreedAccomodationPrice { get; set; }
 
         public string? accommodationAgreementDate { get; set; }
 

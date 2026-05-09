@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Mono.TextTemplating;
+using Tikka.ServicesAustralia.Core.Models;
 using Tikka.ServicesAustralia.Models.Requests;
 using Tikka.ServicesAustralia.Models.Responses;
 using Tikka.ServicesAustralia.Services;
@@ -21,7 +22,7 @@ public class CareRecipientController : ControllerBase
     }
 
     [HttpGet("CareRecipientSearch")]
-    public async Task<ActionResult<CareRecipientSearchResponse>> CareRecipientSearch(
+    public async Task<ActionResult<ApiResponse<CareRecipientSearchResponse>>> CareRecipientSearch(
         string? careRecipientId,
         string? firstName,
         string? middleName,
@@ -31,7 +32,12 @@ public class CareRecipientController : ControllerBase
         string? postCode,
         string? State)
     {
-        var result = await _dataService.CareRecipientSearch(careRecipientId, firstName, middleName, lastName, gender, birthDate, postCode, State);
-        return await Task.FromResult(Ok(result));
+        var (result, errors) = await _dataService.CareRecipientSearch(careRecipientId, firstName, middleName, lastName, gender, birthDate, postCode, State);
+        if (errors.Count > 0)
+        {
+            return await Task.FromResult(BadRequest(ApiResponse<CareRecipientSearchResponse>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+        }
+
+        return await Task.FromResult(Ok(ApiResponse<CareRecipientSearchResponse>.SuccessResponse(result)));
     }
 }
