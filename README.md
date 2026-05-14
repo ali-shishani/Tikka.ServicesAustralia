@@ -56,7 +56,7 @@ Demonstration microservice using Services Australia library
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           Auth Microservices Solution                           │
+│                     Tikka Services Australia Solution                           │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
                 ┌───────────────────────┼───────────────────────┐
