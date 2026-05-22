@@ -13,7 +13,7 @@ import { AuthService } from '../services/auth.service';
 export class LoginComponent {
 
   loginForm: FormGroup = new FormGroup({
-    email: new FormControl(null, [Validators.required, Validators.email]),
+    usernameOrEmail: new FormControl(null, [Validators.required]),
     password: new FormControl(null, [Validators.required]),
   });
 

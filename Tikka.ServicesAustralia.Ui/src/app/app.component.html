@@ -1,32 +1,40 @@
 <!-- The <router-outlet> is used to render the content of the current route inside it
   e.g. the LoginComponent for the route `/public/login` -->
-<mat-toolbar>
-  <button mat-icon-button class="toolbar-icon" (click)="drawer.toggle()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <span>Tikka Portal</span>
-  <span class="toolbar-spacer"></span>
-  <button mat-icon-button class="toolbar-icon">
-    <div><mat-icon>directions_run</mat-icon></div>
-  </button>
-</mat-toolbar>
+<div class="app-container" [class.app-is-mobile]="isMobile()">
+  <mat-toolbar class="app-toolbar">
+    @if(isUserLoggedIn()){
+    <button mat-icon-button class="toolbar-icon" (click)="drawer.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    }
+    <span>Tikka Portal</span>
+    <span class="toolbar-spacer"></span>
+    @if(isUserLoggedIn()){
+    <button mat-icon-button class="toolbar-icon" (click)="logout()">
+      <div><mat-icon>directions_run</mat-icon></div>
+    </button>
+    }
+  </mat-toolbar>
 
-<mat-drawer-container class="nav-container" autosize>
-  <mat-drawer #drawer class="nav-sidenav" mode="side">
-    <mat-card>
-      <mat-nav-list aria-label="Main Navigation">
-        <a mat-list-item routerLink="/layout/home" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>home</mat-icon>
-          <span matListItemTitle>Home</span>
-        </a>
-        <a mat-list-item routerLink="/settings" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>settings</mat-icon>
-          <span matListItemTitle>Settings</span>
-        </a>
-      </mat-nav-list>
-    </mat-card>
-  </mat-drawer>
-  <div class="nav-sidenav-content">
-    <router-outlet></router-outlet>
-  </div>
-</mat-drawer-container>
+  <mat-drawer-container class="nav-container" autosize>
+    <mat-drawer #drawer class="nav-sidenav" [mode]="isMobile() ? 'over' : 'side'">
+      @if(isUserLoggedIn()){
+      <mat-card>
+        <mat-nav-list aria-label="Main Navigation">
+          <a mat-list-item routerLink="/layout/home" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>home</mat-icon>
+            <span matListItemTitle>Home</span>
+          </a>
+          <a mat-list-item routerLink="/settings" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>settings</mat-icon>
+            <span matListItemTitle>Settings</span>
+          </a>
+        </mat-nav-list>
+      </mat-card>
+      }
+    </mat-drawer>
+    <div class="nav-sidenav-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-container>
+</div>

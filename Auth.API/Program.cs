@@ -81,7 +81,23 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+
+// CORD Services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMyFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:56642") // Your frontend URL
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
+
+// UseCors must be placed here
+app.UseCors("AllowMyFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

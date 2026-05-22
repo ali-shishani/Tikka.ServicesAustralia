@@ -9,7 +9,7 @@
         <mat-form-field>
           <input type="email" matInput placeholder="Email" formControlName="email">
           <!-- Here we can display error messages/hints for the user, if one of the Validators adds an error to the email
-           with the .touched check we only display the hints if the input was touched by the users -->
+     with the .touched check we only display the hints if the input was touched by the users -->
           <mat-error *ngIf="this.registerForm.get('email')?.touched && this.registerForm.get('email')?.hasError('required')">
             Email is required
           </mat-error>
@@ -26,17 +26,32 @@
         </mat-form-field>
 
         <mat-form-field>
-          <input type="text" matInput placeholder="First Name" formControlName="firstname">
+          <input matInput [matDatepicker]="datepicker" placeholder="Date of Birth" formControlName="dateOfBirth" />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker>
+            <mat-datepicker-actions>
+              <button matButton matDatepickerCancel>Cancel</button>
+              <button matButton="elevated" matDatepickerApply>Apply</button>
+            </mat-datepicker-actions>
+          </mat-datepicker>
           <mat-error *ngIf="this.registerForm.get('firstname')?.touched && this.registerForm.get('firstname')?.hasError('required')">
             First Name is required
           </mat-error>
         </mat-form-field>
 
         <mat-form-field>
-          <input type="text" matInput placeholder="Last Name" formControlName="lastname">
-          <mat-error *ngIf="this.registerForm.get('lastname')?.touched && this.registerForm.get('lastname')?.hasError('required')">
-            Last Name is required
-          </mat-error>
+          <mat-select formControlName="gender" [errorStateMatcher]="matcher" placeholder="Gender">
+            <mat-option>Clear</mat-option>
+            <mat-option value="0">Male</mat-option>
+            <mat-option value="1">Female</mat-option>
+          </mat-select>
+          @if (this.registerForm.get('gender')?.hasError('required')) {
+          <mat-error>You must make a selection</mat-error>
+          }
+          @if (this.registerForm.get('gender')?.hasError('pattern') && !this.registerForm.get('gender')?.hasError('required')) {
+          <mat-error>Your selection is invalid</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field>

@@ -1,10 +1,19 @@
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { CustomValidators } from '../custom-validator';
 import { RegisterRequest } from '../interfaces';
 import { AuthService } from '../services/auth.service';
 import { tap } from 'rxjs';
 import { Router } from '@angular/router';
+
+/** Error when invalid control is dirty, touched, or submitted. */
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 @Component({
   selector: 'app-register',
@@ -12,13 +21,16 @@ import { Router } from '@angular/router';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
-export class RegisterComponent {
 
+export class RegisterComponent {
+  matcher = new MyErrorStateMatcher();
   registerForm = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     username: new FormControl(null, [Validators.required]),
-    firstname: new FormControl(null, [Validators.required]),
-    lastname: new FormControl(null, [Validators.required]),
+    dateOfBirth: new FormControl(null, [Validators.required]),
+    gender: new FormControl(null, [Validators.required]),
+    // firstname: new FormControl(null, [Validators.required]),
+    // lastname: new FormControl(null, [Validators.required]),
     password: new FormControl(null, [Validators.required]),
     passwordConfirm: new FormControl(null, [Validators.required])
   },
@@ -38,8 +50,8 @@ export class RegisterComponent {
 
     var registerRequest: RegisterRequest =
     {
-      firstname: this.registerForm.value.firstname!,
-      lastname: this.registerForm.value.lastname!,
+      dateOfBirth: this.registerForm.value.dateOfBirth!,
+      gender: parseInt(this.registerForm.value.gender!),
       username: this.registerForm.value.username!,
       email: this.registerForm.value.email!,
       password: this.registerForm.value.password!,

@@ -19,8 +19,13 @@ import { MatListModule } from '@angular/material/list';
 
 import { JwtModule } from '@auth0/angular-jwt';
 
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { AuthInterceptor } from './public/services/auth.interceptor';
+
 // specify the key where the token is stored in the local storage
-export const LOCALSTORAGE_TOKEN_KEY = 'angular_material_login_and_register_example';
+export const LOCALSTORAGE_TOKEN_KEY = 'tikkaTokenKey';
+export const LOCALSTORAGE_REFRESHTOKEN_KEY = 'tikkaRefreshTokenKey';
+export const LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY = 'tikkaRefreshTokenExpiryKey';
 
 // specify tokenGetter for the angular jwt package
 export function tokenGetter() {
@@ -63,7 +68,12 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [],
+  providers: [
+    // Register the functional interceptor here
+    provideHttpClient(
+      withInterceptors([AuthInterceptor])
+    )
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

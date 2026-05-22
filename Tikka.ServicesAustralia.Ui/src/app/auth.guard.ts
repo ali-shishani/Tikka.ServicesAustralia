@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
+import { LOCALSTORAGE_TOKEN_KEY, LOCALSTORAGE_REFRESHTOKEN_KEY, LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY } from './app.module';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,14 @@ export class AuthGuard implements CanActivate {
     // isTokenExpired() will return true, if either:
     // - token is expired
     // - no token or key/value pair in localStorage
-    // - ... (since the backend should validate the token, even if there is another false token, 
+    // - ... (since the backend should validate the token, even if there is another false token,
     //       then he can access the frontend route, but will not get any data from the backend)
     // --> then redirect to the base route and deny the routing
     // --> else return true and allow the routing
     if (this.jwtService.isTokenExpired()) {
+      localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
+      localStorage.removeItem(LOCALSTORAGE_REFRESHTOKEN_KEY);
+      localStorage.removeItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY);
       this.router.navigate(['']);
       return false;
     } else {
