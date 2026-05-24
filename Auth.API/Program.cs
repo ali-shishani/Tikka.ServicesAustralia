@@ -82,7 +82,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-// CORD Services
+// CORS Services
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowMyFrontend",

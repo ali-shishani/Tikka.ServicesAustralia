@@ -1,9 +1,10 @@
 
-using System.Security.Cryptography;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 using Tikka.ServicesAustralia.Core.Configs;
 using Tikka.ServicesAustralia.Core.Data.Entities.Enums;
 using Tikka.ServicesAustralia.Core.Data.Repositories;
+using Tikka.ServicesAustralia.Core.Models;
 using Tikka.ServicesAustralia.Models.Responses;
 using Tikka.ServicesAustralia.Utilities;
 
@@ -21,7 +22,7 @@ public class SADeviceService : ISADeviceService
     private HTTPUtility httpUtil { get; set; } = new HTTPUtility(string.Empty, string.Empty, string.Empty);
 
     private RSAKeyUtility rsaKeyUtility { get; set; } = new RSAKeyUtility();
-    
+
 
     public SADeviceService(
         IStoredInfoRepository storedInfoRepository,
@@ -33,36 +34,43 @@ public class SADeviceService : ISADeviceService
         _authenticationService = authenticationService;
     }
 
-    public async Task<string> GetDeviceInfo()
+    public async Task<(DeviceInformationResponse response, List<AppException> errors)> GetDeviceInfo()
     {
-        var deviceInfo = "ClientId:" + _servicesAustraliaDeviceConfig.ClientId +
-             Environment.NewLine + "Product Id:" + _servicesAustraliaDeviceConfig.ProductId +
-             Environment.NewLine + "Device Name:" + _servicesAustraliaDeviceConfig.DeviceName +
-             Environment.NewLine + "Organisation RA:" + _servicesAustraliaDeviceConfig.OrganisationRA +
-             Environment.NewLine + "ServiceNapsId:" + _servicesAustraliaDeviceConfig.ServiceNapsId +
-             Environment.NewLine + "AgedCareResidentialServiceId:" + _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId +
-             Environment.NewLine + "AgedCareHomeServiceId:" + _servicesAustraliaDeviceConfig.AgedCareHomeServiceId +
-             Environment.NewLine + "Token Audience:" + _servicesAustraliaDeviceConfig.TokenAud;
+        var result = new DeviceInformationResponse();
+        var errors = new List<AppException>();
+
+        result.ClientId = _servicesAustraliaDeviceConfig.ClientId;
+        result.ProductId = _servicesAustraliaDeviceConfig.ProductId;
+        result.DeviceName = _servicesAustraliaDeviceConfig.DeviceName;
+        result.OrganisationRA = _servicesAustraliaDeviceConfig.OrganisationRA;
+        result.ServiceNapsId = _servicesAustraliaDeviceConfig.ServiceNapsId;
+        result.AgedCareResidentialServiceId = _servicesAustraliaDeviceConfig.AgedCareResidentialServiceId;
+        result.AgedCareHomeServiceId = _servicesAustraliaDeviceConfig.AgedCareHomeServiceId;
+        result.TokenAud = _servicesAustraliaDeviceConfig.TokenAud;
 
         var keyExpiration = await _storedInfoRepository.GetByCodeAsync(StoredInfoCode.KeyExpiration);
-        deviceInfo += Environment.NewLine + "Key Expiry:" + keyExpiration?.Value;
+        result.KeyExpiry = keyExpiration?.Value;
 
         var deviceExpiration = await _storedInfoRepository.GetByCodeAsync(StoredInfoCode.DeviceExpiration);
-        deviceInfo += Environment.NewLine + "Device Expiry:" + deviceExpiration?.Value;
+        result.DeviceExpiry = deviceExpiration?.Value;
 
-        return deviceInfo;
+        return (result, errors);
     }
 
-    public async Task<string> Activate(string activationCode)
+    public async Task<(string response, List<AppException> errors)> Activate(string activationCode)
     {
+        var errors = new List<AppException>();
+        var logText = "Device activation started";
+
         if (string.IsNullOrWhiteSpace(activationCode))
         {
-            return "Activation code is required.";
+            errors.Add(new AppException("Activation code is required", "Activation code is required"));
+            return (logText, errors);
         }
 
         // generate a new key
         rsaKeyUtility.createKeys(_servicesAustraliaDeviceConfig.DeviceName);
-        var logText = "RSA key generated";
+        logText = "RSA key generated";
 
         // get public key in JWK format
         var publicJwk = rsaKeyUtility.generatePublicJwk(_servicesAustraliaDeviceConfig.DeviceName);
@@ -93,12 +101,13 @@ public class SADeviceService : ISADeviceService
             await _storedInfoRepository.UpsertByCodeAsync(StoredInfoCode.DeviceExpiration, responseObject?.deviceExpiry);
         }
 
-        return logText;
+        return (logText, errors);
     }
 
-    public async Task<string> RefreshKey()
+    public async Task<(string response, List<AppException> errors)> RefreshKey()
     {
-        var logText = string.Empty;
+        var errors = new List<AppException>();
+        var logText = "Device refresh key process started";
 
         // generate a new key, but dont persist in the key store
         var newKey = rsaKeyUtility.createKeys(_servicesAustraliaDeviceConfig.DeviceName, false);
@@ -127,7 +136,7 @@ public class SADeviceService : ISADeviceService
                 publicJwk,
                 accessToken);
             logText += Environment.NewLine + "response: " + Environment.NewLine + "------------------------" + Environment.NewLine + result + Environment.NewLine + "------------------------";
-            
+
             // determine if request was successful
             if (result.Contains("ACTIVE"))
             {
@@ -148,6 +157,6 @@ public class SADeviceService : ISADeviceService
             logText += Environment.NewLine + "Failed to acquire access token.";
         }
 
-        return logText;
+        return (logText, errors);
     }
 }

@@ -2,8 +2,29 @@
   flex: 1 1 auto;
 }
 
-.app-is-mobile  {
-  position: fixed;
-  /* Make sure the toolbar will stay on top of the content as it scrolls past. */
-  z-index: 2;
+:host {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
+
+mat-toolbar {
+  flex: 0 0 auto;
+}
+
+div {
+  flex: 1 1 0;
+}
+
+mat-drawer-container, mat-drawer-content {
+  display: block;
+  height: 100%;
+}
+
+main {
+  height: 100%;
+  overflow-y: auto;
+}
+

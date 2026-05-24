@@ -1,7 +1,11 @@
-using System.Collections;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
+using Tikka.ServicesAustralia.Core.Models;
+using Tikka.ServicesAustralia.Models.Responses;
 using Tikka.ServicesAustralia.Services;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MiniMicroservice.API.Controllers;
 
@@ -18,23 +22,38 @@ public class DeviceController : ControllerBase
     }
 
     [HttpGet("GetInfo")]
-    public async Task<ActionResult<List<string>>> GetInfo()
+    public async Task<ActionResult<ApiResponse<DeviceInformationResponse>>> GetInfo()
     {
-        var result = await _deviceService.GetDeviceInfo();
-        return await Task.FromResult(Ok(result));
+        var (result, errors) = await _deviceService.GetDeviceInfo();
+        if (errors.Count > 0)
+        {
+            return await Task.FromResult(BadRequest(ApiResponse<DeviceInformationResponse>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+        }
+
+        return await Task.FromResult(Ok(ApiResponse<DeviceInformationResponse>.SuccessResponse(result)));
     }
 
     [HttpPut("Activate")]
-    public async Task<ActionResult<string>>Activate(string activationCode)
+    public async Task<ActionResult<ApiResponse<string>>> Activate(string activationCode)
     {
-        var resultLog = await _deviceService.Activate(activationCode);
-        return await Task.FromResult(Ok(resultLog));
+        var (result, errors) = await _deviceService.Activate(activationCode);
+        if (errors.Count > 0)
+        {
+            return await Task.FromResult(BadRequest(ApiResponse<string>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+        }
+
+        return await Task.FromResult(Ok(ApiResponse<string>.SuccessResponse(result)));
     }
 
     [HttpPut("RefreshKey")]
-    public async Task<ActionResult<string>> RefreshKeyRefreshKey()
+    public async Task<ActionResult<ApiResponse<string>>> RefreshKey()
     {
-        var resultLog = await _deviceService.RefreshKey();
-        return await Task.FromResult(Ok(resultLog));
+        var (result, errors) = await _deviceService.RefreshKey();
+        if (errors.Count > 0)
+        {
+            return await Task.FromResult(BadRequest(ApiResponse<string>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+        }
+
+        return await Task.FromResult(Ok(ApiResponse<string>.SuccessResponse(result)));
     }
 }

@@ -5,6 +5,7 @@ import { map, Observable, of, switchMap, tap } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, LogoutRequest } from '../interfaces';
+import { environment } from '../../../environments/environment';
 
 export const fakeLoginResponse: LoginResponse = {
   // fakeAccessToken.....should all come from real backend
@@ -19,11 +20,6 @@ export const fakeRegisterResponse: RegisterResponse = {
   email: 'user@example.com'
 }
 
-export const config = {
-  authBaseUrl: 'https://localhost:7228',
-  baseUrl: 'https://localhost:7228',
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +30,8 @@ export class AuthService {
     private snackbar: MatSnackBar,
     private jwtService: JwtHelperService
   ) { }
+
+  protected readonly environment = environment;
 
   /*
    Due to the '/api' the url will be rewritten by the proxy, e.g. to http://localhost:8080/api/auth/login
@@ -55,7 +53,7 @@ export class AuthService {
     //  duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
     // }))
     // );
-    return this.http.post<LoginResponse>(config.authBaseUrl + '/api/account/login', loginRequest).pipe(
+    return this.http.post<LoginResponse>(environment.authApiUrl + '/api/account/login', loginRequest).pipe(
       tap((res) => {
         localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, res.token);
         localStorage.setItem(LOCALSTORAGE_REFRESHTOKEN_KEY, res.refreshToken);
@@ -76,7 +74,7 @@ export class AuthService {
       refreshToken: refreshToken!,
       refreshTokenExpireTime: refreshTokenExpiry!,
     };
-    return this.http.post(config.authBaseUrl + '/api/account/logout', LogoutRequest, { responseType: 'text' }).pipe(
+    return this.http.post(environment.authApiUrl + '/api/account/logout', LogoutRequest, { responseType: 'text' }).pipe(
       tap(() => {
         localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
         localStorage.removeItem(LOCALSTORAGE_REFRESHTOKEN_KEY);
@@ -101,7 +99,7 @@ export class AuthService {
     //  duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
     // }))
     // )
-    return this.http.post<RegisterResponse>(config.authBaseUrl + '/api/account/register', registerRequest).pipe(
+    return this.http.post<RegisterResponse>(environment.authApiUrl + '/api/account/register', registerRequest).pipe(
       tap((res: RegisterResponse) => this.snackbar.open(`User created successfully`, 'Close', {
         duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
       }))

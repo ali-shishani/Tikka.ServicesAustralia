@@ -1,0 +1,32 @@
+.angular-logo {
+  max-width: 9.2rem;
+}
+
+.content {
+  margin: 0px 10px 10px 10px;
+  padding: 0px 10px 10px 10px;
+
+  .header {
+    margin: 10px 10px 10px 10px;
+  }
+
+  .toolbar {
+
+    .button {
+      margin: 5px 1px 5px 1px;
+    }
+  }
+
+  .details {
+    margin: 10px 10px 10px 10px;
+
+    .title {
+      margin: 10px 10px 10px 10px;
+    }
+
+    .field {
+      margin: 5px;
+      min-width: 350px;
+    }
+  }
+}

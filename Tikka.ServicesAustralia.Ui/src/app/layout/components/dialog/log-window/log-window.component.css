@@ -1,0 +1,8 @@
+
+.log-area {
+  width: 100%;
+
+  .log-area-field {
+    min-height: 500px;
+  }
+}

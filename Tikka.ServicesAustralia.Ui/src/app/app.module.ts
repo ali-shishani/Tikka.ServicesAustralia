@@ -16,6 +16,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { JwtModule } from '@auth0/angular-jwt';
 
@@ -53,12 +55,13 @@ export function tokenGetter() {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    // MatTabsModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
     MatSidenavModule,
     MatListModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
 
     // Jwt Helper Module Import
     JwtModule.forRoot({
