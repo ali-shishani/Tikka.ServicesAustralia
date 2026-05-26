@@ -25,7 +25,6 @@ import { ConfirmationWindowComponent } from '../dialog/confirmation-window/confi
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  title = 'Tikka Services Australia';
   deviceInfo: DeviceInformationResponse | null = null;
 
   constructor(

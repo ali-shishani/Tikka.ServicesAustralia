@@ -1,0 +1,65 @@
+<div class="container">
+
+  <mat-card>
+    <div class="header">
+      <mat-card-title>Users</mat-card-title>
+      <p>Manage your users according to your integration needs.</p>
+    </div>
+
+  </mat-card>
+
+  <mat-toolbar class="toolbar">
+    <button mat-raised-button (click)="addData()" class="toolbar-button">
+      Add record
+    </button>
+    <button mat-raised-button
+            [disabled]="!dataSource.length"
+            (click)="removeData()"
+            class="toolbar-button">
+      Remove record
+    </button>
+    <button mat-raised-button
+            [disabled]="!dataSource.length"
+            class="toolbar-button">
+      Refresh
+    </button>
+  </mat-toolbar>
+
+  <mat-card>
+    <div class="table-container">
+
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 users-table">
+
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef>User Name</th>
+          <td mat-cell *matCellDef="let element">{{element.username}}</td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let element">{{element.email}}</td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="isEmailConfirmed">
+          <th mat-header-cell *matHeaderCellDef>Email Confirmed</th>
+          <td mat-cell *matCellDef="let element"><mat-chip>{{element.isEmailConfirmed}}</mat-chip></td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-button><mat-icon>edit</mat-icon>Edit</button>
+            <button mat-button color="warn"><mat-icon>delete</mat-icon>Delete</button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-card>
+</div>

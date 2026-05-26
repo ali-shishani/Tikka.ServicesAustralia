@@ -11,7 +11,6 @@ import { AuthService } from './public/services/auth.service';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'Tikka Portal';
   showFiller = false;
 
   protected readonly isMobile = signal(true);
