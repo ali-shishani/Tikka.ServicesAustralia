@@ -7,6 +7,6 @@
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-flat-button [mat-dialog-close]="output()" [disabled]="!isValid()">Ok</button>
+  <button mat-raised-button (click)="onNoClick()">Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="output()" [disabled]="!isValid()">Ok</button>
 </mat-dialog-actions>

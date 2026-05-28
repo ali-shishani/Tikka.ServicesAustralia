@@ -7,9 +7,8 @@
   }
 
   .toolbar {
-
     .button {
-      margin: 5px 1px 5px 1px;
+      margin-left: 8px;
     }
   }
 
@@ -23,6 +22,19 @@
     .field {
       margin: 5px;
       min-width: 350px;
+    }
+
+    .loading-spinner-container {
+      display: flex;
+      justify-content: center; /* Horizontal alignment */
+      align-items: center; /* Vertical alignment */
+      height: 100%;
+      margin-top: 10px;
+
+      .loading-spinner-text {
+        position: absolute;
+        font-weight: 500;
+      }
     }
   }
 }

@@ -21,7 +21,6 @@ global using Horus.API.Data;
 global using Horus.API.DTOs;
 global using Horus.API.Entities;
 global using Horus.API.Enums;
-global using Horus.API.Exceptions;
 global using Horus.API.Extensions;
 global using Horus.API.Middlewares;
 global using Horus.API.Repositories;

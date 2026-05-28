@@ -25,3 +25,16 @@ export interface ActivateDeviceResponseWrapper {
 export interface RefreshDeviceKeyResponseWrapper {
   data: string;
 }
+
+export interface getUsersResponse {
+  Id: string;
+  username: string;
+  email: string;
+  dateOfBirth?: Date;
+  gender: string;
+  isEmailConfirmed: boolean;
+}
+
+export interface getUsersResponseWrapper {
+  data: getUsersResponse[];
+}

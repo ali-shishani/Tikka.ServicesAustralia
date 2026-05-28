@@ -1,4 +1,5 @@
 using Microsoft.OpenApi;
+using Tikka.ServicesAustralia.Core.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Services
 builder.Services
+    .AddScoped<IUserService, UserService>()
     .AddScoped<IAccountService, AccountService>()
     .AddScoped<IJwtService, JwtService>()
     .AddSingleton<IEmailService, EmailService>()

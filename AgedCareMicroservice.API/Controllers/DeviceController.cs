@@ -9,7 +9,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MiniMicroservice.API.Controllers;
 
-//[Authorize]
+[Authorize]
 [Route("api/[controller]"), ApiController]
 public class DeviceController : ControllerBase
 {

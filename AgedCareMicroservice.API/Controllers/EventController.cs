@@ -12,7 +12,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
 
 namespace MiniMicroservice.API.Controllers;
 
-//[Authorize]
+[Authorize]
 [Route("api/[controller]"), ApiController]
 public class EventController : ControllerBase
 {

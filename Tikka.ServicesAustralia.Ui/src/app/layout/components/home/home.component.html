@@ -11,10 +11,10 @@
 
     <mat-toolbar class="toolbar">
       <div class="button">
-        <button mat-flat-button (click)="activateDevice()"><mat-icon>devices</mat-icon>Activate Device</button>
+        <button mat-raised-button (click)="activateDevice()" color="primary"><mat-icon>devices</mat-icon>Activate Device</button>
       </div>
       <div class="button">
-        <button mat-stroked-button (click)="refreshDeviceKey()"><mat-icon>vpn_key</mat-icon>Refresh Key</button>
+        <button mat-raised-button (click)="refreshDeviceKey()"><mat-icon>vpn_key</mat-icon>Refresh Key</button>
       </div>
     </mat-toolbar>
 
@@ -24,9 +24,8 @@
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         }
 
-        <mat-card-title class="title">System Information</mat-card-title>
-
         @if(isInitialised()){
+        <mat-card-title class="title">System Information</mat-card-title>
         <div flex layout="row" layout-sm="column" layout-xs="column">
           <mat-form-field class="field">
             <mat-label>Device Name</mat-label>
@@ -78,6 +77,16 @@
           </mat-form-field>
         </div>
         }
+
+        @if(!isInitialised()){
+        <div class="loading-spinner-container">
+          <div class="loading-spinner">
+            <mat-progress-spinner mode="indeterminate" strokeWidth="3"></mat-progress-spinner>
+          </div>
+          <div class="loading-spinner-text">Loading...</div>
+        </div>
+        }
+
       </div>
     </mat-card>
   </div>

@@ -2,6 +2,7 @@ namespace Horus.API.Repositories;
 
 public interface IUserRepository
 {
+    Task<IEnumerable<User>> GetAllAsync();
     Task<User> AddUserAsync(User user);
     Task<User?> GetByIdAsync(Guid id);
     Task<User?> GetUserByEmailAsync(string email);

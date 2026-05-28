@@ -1,3 +1,5 @@
+using Horus.API.Exceptions;
+
 namespace Horus.API.Controllers;
 
 [Route("api/[controller]")]

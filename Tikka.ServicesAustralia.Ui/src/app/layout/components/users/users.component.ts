@@ -1,24 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, model, signal, ViewChild } from '@angular/core';
+import { map, Observable, of, switchMap, tap } from 'rxjs';
+
 import { MatTable } from '@angular/material/table';
 
-export interface getUsersResponse {
-  username: string;
-  email: string;
-  isEmailConfirmed: boolean;
-}
-
-const ELEMENT_DATA: getUsersResponse[] = [
-  { isEmailConfirmed: true, username: 'Hydrogen', email: 'H' },
-  { isEmailConfirmed: true, username: 'Helium', email: 'He' },
-  { isEmailConfirmed: true, username: 'Lithium', email: 'Li' },
-  { isEmailConfirmed: true, username: 'Beryllium', email: 'Be' },
-  { isEmailConfirmed: true, username: 'Boron', email: 'B' },
-  { isEmailConfirmed: true, username: 'Carbon', email: 'C' },
-  { isEmailConfirmed: true, username: 'Nitrogen', email: 'N' },
-  { isEmailConfirmed: true, username: 'Oxygen', email: 'O' },
-  { isEmailConfirmed: true, username: 'Fluorine', email: 'F' },
-  { isEmailConfirmed: true, username: 'Neon', email: 'Ne' },
-];
+import { getUsersResponse, getUsersResponseWrapper } from '../../interfaces'
+import { UsersService } from '../../services/users.service'
 
 @Component({
   selector: 'app-users',
@@ -27,19 +13,50 @@ const ELEMENT_DATA: getUsersResponse[] = [
   styleUrl: './users.component.css'
 })
 export class UsersComponent {
-  displayedColumns: string[] = ['username', 'email', 'isEmailConfirmed', 'action'];
-  dataSource = [...ELEMENT_DATA];
+  columnsToDisplay: string[] = ['userName', 'email', 'action'];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
+  dataSource!: getUsersResponse[];
+  expandedElement!: getUsersResponse | null;
+
+  protected readonly isLoading = signal(false);
+  protected readonly isInitialised = signal(false);
 
   @ViewChild(MatTable) table!: MatTable<getUsersResponse>;
 
-  addData() {
-    const randomElementIndex = Math.floor(Math.random() * ELEMENT_DATA.length);
-    this.dataSource.push(ELEMENT_DATA[randomElementIndex]);
-    this.table.renderRows();
+  constructor(
+    private usersService: UsersService
+  ) {
+    this.loadUsers().pipe(
+      tap((res: getUsersResponseWrapper) => {
+        this.dataSource = res.data;
+        this.isInitialised.set(true);
+      })
+    ).subscribe();
   }
 
-  removeData() {
-    this.dataSource.pop();
+  loadUsers(): Observable<getUsersResponseWrapper> {
+    return this.usersService.getAll();
+  }
+
+  dateOfBirthText(dateValue: string): string {
+    return dateValue.split('T')[0];
+  }
+
+  emailConfirmedText(emailConfirmedValue: boolean): string {
+    return emailConfirmedValue ? 'Yes' : 'No';
+  }
+
+  /** Checks whether an element is expanded. */
+  isExpanded(element: getUsersResponse) {
+    return this.expandedElement === element;
+  }
+
+  /** Toggles the expanded state of an element. */
+  toggle(element: getUsersResponse) {
+    this.expandedElement = this.isExpanded(element) ? null : element;
+  }
+
+  addData() {
     this.table.renderRows();
   }
 }

@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
+      <ProjectReference Include="..\Tikka.ServicesAustralia.Core\Tikka.ServicesAustralia.Core.csproj" />
     </ItemGroup>
 
 </Project>

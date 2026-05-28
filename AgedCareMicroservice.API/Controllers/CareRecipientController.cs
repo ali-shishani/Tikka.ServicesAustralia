@@ -10,7 +10,7 @@ using Tikka.ServicesAustralia.Services;
 
 namespace MiniMicroservice.API.Controllers;
 
-//[Authorize]
+[Authorize]
 [Route("api/[controller]"), ApiController]
 public class CareRecipientController : ControllerBase
 {

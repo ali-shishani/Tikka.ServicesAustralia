@@ -16,22 +16,20 @@
 <mat-drawer-container class="nav-container" autosize>
   <mat-drawer #drawer class="nav-sidenav" [mode]="isMobile() ? 'over' : 'side'">
     @if(isUserLoggedIn()){
-    <mat-card>
-      <mat-nav-list aria-label="Main Navigation">
-        <a mat-list-item routerLink="/layout/home" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>home</mat-icon>
-          <span matListItemTitle>Home</span>
-        </a>
-        <a mat-list-item routerLink="/layout/users" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>supervisor_account</mat-icon>
-          <span matListItemTitle>Users</span>
-        </a>
-        <a mat-list-item routerLink="/layout/settings" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>settings</mat-icon>
-          <span matListItemTitle>Settings</span>
-        </a>
-      </mat-nav-list>
-    </mat-card>
+    <mat-nav-list aria-label="Main Navigation">
+      <a mat-list-item routerLink="/layout/home" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Home</span>
+      </a>
+      <a mat-list-item routerLink="/layout/users" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>supervisor_account</mat-icon>
+        <span matListItemTitle>Users</span>
+      </a>
+      <a mat-list-item routerLink="/layout/settings" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>settings</mat-icon>
+        <span matListItemTitle>Settings</span>
+      </a>
+    </mat-nav-list>
     }
   </mat-drawer>
   <mat-drawer-content class="nav-sidenav-content">

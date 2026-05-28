@@ -9,6 +9,11 @@ public class UserRepository : IUserRepository
         _authContext = authContext;
     }
 
+    public async Task<IEnumerable<User>> GetAllAsync()
+    {
+        return await Task.FromResult(_authContext.Users);
+    }
+
     public async Task<User> AddUserAsync(User user)
     {
         _authContext.Users.Add(user);

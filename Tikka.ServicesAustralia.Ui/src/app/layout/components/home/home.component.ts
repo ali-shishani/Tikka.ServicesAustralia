@@ -34,12 +34,11 @@ export class HomeComponent {
       tap((res: DeviceInformationResponseWrapper) => {
         this.deviceInfo = res.data;
         this.isInitialised.set(true);
-        this.isLoading.set(false);
       })
     ).subscribe();
   }
 
-  protected readonly isLoading = signal(true);
+  protected readonly isLoading = signal(false);
   protected readonly isInitialised = signal(false);
 
   readonly activationCode = signal('');
