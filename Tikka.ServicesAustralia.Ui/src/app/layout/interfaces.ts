@@ -1,6 +1,9 @@
-/*
-Interface for the device
-*/
+
+export interface ApiException {
+  message: string;
+  details: string;
+}
+
 export interface DeviceInformationResponse {
   deviceName: string;
   clientId: string;
@@ -37,4 +40,5 @@ export interface getUsersResponse {
 
 export interface getUsersResponseWrapper {
   data: getUsersResponse[];
+  errors: ApiException[];
 }

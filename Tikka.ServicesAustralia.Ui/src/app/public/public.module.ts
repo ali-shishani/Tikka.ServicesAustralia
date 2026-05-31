@@ -13,6 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 
 
@@ -37,6 +39,8 @@ import { RouterLink } from '@angular/router';
     MatIconModule,
     MatDatepickerModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule
   ]
 })
 export class PublicModule { }

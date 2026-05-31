@@ -27,5 +27,17 @@ namespace Auth.API.Controllers
 
             return await Task.FromResult(Ok(ApiResponse<List<GetUserResponse>>.SuccessResponse(result)));
         }
+
+        [HttpPost("Register")]
+        public async Task<ActionResult<ApiResponse<GetUserResponse>>> Register([FromBody] RegisterRequest request)
+        {
+            var (result, errors) = await _userService.RegisterUserAsync(request);
+            if (errors.Count > 0)
+            {
+                return await Task.FromResult(BadRequest(ApiResponse<List<GetUserResponse>>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+            }
+
+            return await Task.FromResult(Ok(ApiResponse<GetUserResponse>.SuccessResponse(result)));
+        }
     }
 }

@@ -29,8 +29,6 @@ export class RegisterComponent {
     username: new FormControl(null, [Validators.required]),
     dateOfBirth: new FormControl(null, [Validators.required]),
     gender: new FormControl(null, [Validators.required]),
-    // firstname: new FormControl(null, [Validators.required]),
-    // lastname: new FormControl(null, [Validators.required]),
     password: new FormControl(null, [Validators.required]),
     passwordConfirm: new FormControl(null, [Validators.required])
   },

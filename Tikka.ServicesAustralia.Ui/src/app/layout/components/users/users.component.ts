@@ -2,9 +2,19 @@ import { Component, inject, model, signal, ViewChild } from '@angular/core';
 import { map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { MatTable } from '@angular/material/table';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 
 import { getUsersResponse, getUsersResponseWrapper } from '../../interfaces'
 import { UsersService } from '../../services/users.service'
+import { NewUserComponent } from './new-user/new-user.component'
 
 @Component({
   selector: 'app-users',
@@ -23,6 +33,8 @@ export class UsersComponent {
 
   @ViewChild(MatTable) table!: MatTable<getUsersResponse>;
 
+  readonly userEditialog = inject(MatDialog);
+
   constructor(
     private usersService: UsersService
   ) {
@@ -39,7 +51,11 @@ export class UsersComponent {
   }
 
   dateOfBirthText(dateValue: string): string {
-    return dateValue.split('T')[0];
+    const dateText = dateValue.split('T')[0];
+    if (dateText) {
+      return dateText.split('-')[2] + '/' + dateText.split('-')[1] + '/' + dateText.split('-')[0];
+    }
+    return dateText;
   }
 
   emailConfirmedText(emailConfirmedValue: boolean): string {
@@ -56,7 +72,41 @@ export class UsersComponent {
     this.expandedElement = this.isExpanded(element) ? null : element;
   }
 
-  addData() {
-    this.table.renderRows();
+  newUser() {
+    const dialogRef = this.userEditialog.open(NewUserComponent, {
+      width: '700px',
+      data: { title: 'New user', output: null },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.dataSource.push(result)
+        this.table.renderRows();
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  refresh() {
+    this.isInitialised.set(false);
+    this.loadUsers().pipe(
+      tap((res: getUsersResponseWrapper) => {
+        this.dataSource = res.data;
+        this.isInitialised.set(true);
+      })
+    ).subscribe();
+  }
+
+  editUser(user: getUsersResponse) {
+    const dialogRef = this.userEditialog.open(NewUserComponent, {
+      width: '700px',
+      data: { title: 'New user', output: null },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.dataSource.push(result)
+        this.table.renderRows();
+        this.isLoading.set(false);
+      }
+    });
   }
 }

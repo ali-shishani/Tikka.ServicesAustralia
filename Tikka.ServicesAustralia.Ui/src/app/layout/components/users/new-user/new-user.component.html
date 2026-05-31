@@ -1,0 +1,90 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+  <div class="progress-container">
+    @if(isLoading()){
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+  </div>
+  
+  <form [formGroup]="userForm" (ngSubmit)="submit()">
+
+    <mat-form-field>
+      <input type="email" matInput placeholder="Email" formControlName="email">
+      <!-- Here we can display error messages/hints for the user, if one of the Validators adds an error to the email
+    with the .touched check we only display the hints if the input was touched by the users -->
+      <mat-error *ngIf="this.userForm.get('email')?.touched && this.userForm.get('email')?.hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="this.userForm.get('email')?.touched && this.userForm.get('email')?.hasError('email')">
+        Email must be a valid Email
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input type="text" matInput placeholder="Username" formControlName="username">
+      <mat-error *ngIf="this.userForm.get('username')?.touched && this.userForm.get('username')?.hasError('required')">
+        Username is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [matDatepicker]="datepicker" placeholder="Date of Birth" formControlName="dateOfBirth" />
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+      <mat-datepicker #datepicker>
+        <mat-datepicker-actions>
+          <button mat-button matDatepickerCancel>Cancel</button>
+          <button mat-button="elevated" matDatepickerApply>Apply</button>
+        </mat-datepicker-actions>
+      </mat-datepicker>
+      <mat-error *ngIf="this.userForm.get('firstname')?.touched && this.userForm.get('firstname')?.hasError('required')">
+        First Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select formControlName="gender" [errorStateMatcher]="matcher" placeholder="Gender">
+        <mat-option>Clear</mat-option>
+        <mat-option value="0">Male</mat-option>
+        <mat-option value="1">Female</mat-option>
+      </mat-select>
+      @if (this.userForm.get('gender')?.hasError('required')) {
+      <mat-error>You must make a selection</mat-error>
+      }
+      @if (this.userForm.get('gender')?.hasError('pattern') && !this.userForm.get('gender')?.hasError('required')) {
+      <mat-error>Your selection is invalid</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <input type="password" matInput placeholder="Password" formControlName="password">
+      <mat-error *ngIf="this.userForm.get('password')?.touched && this.userForm.get('password')?.hasError('required')">
+        Password is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input type="password" matInput placeholder="Password Confirmation" formControlName="passwordConfirm">
+      <mat-error *ngIf="this.userForm.get('passwordConfirm')?.touched && this.userForm.get('passwordConfirm')?.hasError('required')">
+        Password Confirmation is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="validation-container">
+      <mat-error *ngIf="this.userForm.get('passwordConfirm')?.dirty && this.userForm.hasError('passwordsNotMatching')">
+        Passwords are not matching!
+      </mat-error>
+
+      @for (item of validationErrors; track $index) {
+      <mat-error>
+        {{ item.details }}
+      </mat-error>
+      }
+    </div>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onNoClick()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!userForm.valid" (click)="submit()">Save</button>
+</mat-dialog-actions>
