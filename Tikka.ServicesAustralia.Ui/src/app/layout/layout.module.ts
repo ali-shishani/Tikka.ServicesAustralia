@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { provideNativeDateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 
 import { LayoutRoutingModule } from './layout-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {
   MatDialog,
   MatDialogActions,
@@ -34,7 +35,7 @@ import { ConfirmationWindowComponent } from './components/dialog/confirmation-wi
 import { UsersComponent } from './components/users/users.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { NewUserComponent } from './components/users/new-user/new-user.component';
-
+import { EditUserComponent } from './components/users/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -44,9 +45,13 @@ import { NewUserComponent } from './components/users/new-user/new-user.component
     ConfirmationWindowComponent,
     UsersComponent,
     SettingsComponent,
-    NewUserComponent
+    NewUserComponent,
+    EditUserComponent
   ],
-  providers: [provideNativeDateAdapter()],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-AU' },
+    provideNativeDateAdapter()
+  ],
   imports: [
     CommonModule,
     // Import our Routes for this module
@@ -71,6 +76,7 @@ import { NewUserComponent } from './components/users/new-user/new-user.component
     MatProgressBarModule,
     MatTableModule,
     MatChipsModule,
+    MatSlideToggleModule,
   ]
 })
 export class LayoutModule { }

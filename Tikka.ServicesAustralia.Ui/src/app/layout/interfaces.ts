@@ -30,10 +30,10 @@ export interface RefreshDeviceKeyResponseWrapper {
 }
 
 export interface getUsersResponse {
-  Id: string;
-  username: string;
+  id: string;
+  userName: string;
   email: string;
-  dateOfBirth?: Date;
+  dateOfBirth: Date;
   gender: string;
   isEmailConfirmed: boolean;
 }
@@ -41,4 +41,12 @@ export interface getUsersResponse {
 export interface getUsersResponseWrapper {
   data: getUsersResponse[];
   errors: ApiException[];
+}
+
+export interface UpdateUserRequest {
+  userId: string;
+  username: string;
+  dateOfBirth: Date;
+  gender: number;
+  isEmailConfirmed: boolean;
 }

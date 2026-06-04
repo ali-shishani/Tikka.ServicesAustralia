@@ -3,20 +3,18 @@ import { FormGroup, FormControl, Validators, FormGroupDirective, NgForm } from '
 import { HttpErrorResponse } from '@angular/common/http';
 import { tap, catchError, throwError, of } from 'rxjs';
 
-import { ErrorStateMatcher } from '@angular/material/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { ErrorStateMatcher } from '@angular/material/core';
 
-import { getUsersResponse, getUsersResponseWrapper, ApiException } from '../../../interfaces'
+import { getUsersResponse, getUsersResponseWrapper, ApiException, UpdateUserRequest } from '../../../interfaces'
 import { UsersService } from '../../../services/users.service'
-import { AuthService } from '../../../../public/services/auth.service';
-import { CustomValidators } from '../../../../public/custom-validator';
-import { RegisterRequest } from '../../../../public/interfaces';
 
-export interface NewUserData {
+export interface EditUserData {
   title: string;
+  record: getUsersResponse;
 }
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -27,14 +25,15 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-  selector: 'app-new-user',
+  selector: 'app-edit-user',
   standalone: false,
-  templateUrl: './new-user.component.html',
-  styleUrl: './new-user.component.css'
+  templateUrl: './edit-user.component.html',
+  styleUrl: './edit-user.component.css'
 })
-export class NewUserComponent {
-  readonly dialogRef = inject(MatDialogRef<NewUserComponent>);
-  readonly data = inject<NewUserData>(MAT_DIALOG_DATA);
+export class EditUserComponent {
+  readonly dialogRef = inject(MatDialogRef<EditUserComponent>);
+  readonly data = inject<EditUserData>(MAT_DIALOG_DATA);
+  readonly record: getUsersResponse = this.data.record;
 
   validationErrors: ApiException[] = [];
 
@@ -42,25 +41,22 @@ export class NewUserComponent {
 
   matcher = new MyErrorStateMatcher();
   userForm = new FormGroup({
-    email: new FormControl(null, [Validators.required, Validators.email]),
-    username: new FormControl(null, [Validators.required]),
-    dateOfBirth: new FormControl(null, [Validators.required]),
-    gender: new FormControl(null, [Validators.required]),
-    password: new FormControl(null, [Validators.required]),
-    passwordConfirm: new FormControl(null, [Validators.required])
-  },
-    // add custom Validators to the form, to make sure that password and passwordConfirm are equal
-    {
-      validators: CustomValidators.passwordsMatching
-    });
+    email: new FormControl(''),
+    userName: new FormControl(''),
+    dateOfBirth: new FormControl(new Date(), [Validators.required]),
+    gender: new FormControl('', [Validators.required]),
+    isEmailConfirmed: new FormControl(false),
+  });
 
   constructor(
     private usersService: UsersService
   ) {
-  }
-
-  onNoClick(): void {
-    this.dialogRef.close();
+    // this.userForm.setValue({ email: this.record.email, userName: this.record.userName });
+    this.userForm.get('email')?.setValue(this.record.email);
+    this.userForm.get('userName')?.setValue(this.record.userName);
+    this.userForm.get('dateOfBirth')?.setValue(this.record.dateOfBirth);
+    this.userForm.get('gender')?.setValue(this.record.gender == 'Male' ? '0' : '1');
+    this.userForm.get('isEmailConfirmed')?.setValue(this.record.isEmailConfirmed);
   }
 
   submit(): void {
@@ -71,16 +67,16 @@ export class NewUserComponent {
     this.isLoading.set(true);
     this.validationErrors = [];
 
-    var registerRequest: RegisterRequest =
+    var updateUserRequest: UpdateUserRequest =
     {
+      userId: this.record.id,
+      username: this.userForm.value.userName!,
       dateOfBirth: this.userForm.value.dateOfBirth!,
       gender: parseInt(this.userForm.value.gender!),
-      username: this.userForm.value.username!,
-      email: this.userForm.value.email!,
-      password: this.userForm.value.password!,
+      isEmailConfirmed: this.userForm.value.isEmailConfirmed!,
     };
 
-    this.usersService.register(registerRequest).pipe(
+    this.usersService.update(updateUserRequest).pipe(
       tap((res: getUsersResponseWrapper) => {
         const newUser = res.data;
         this.isLoading.set(false);
@@ -99,5 +95,9 @@ export class NewUserComponent {
         return of(res);
       })
     ).subscribe();
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }

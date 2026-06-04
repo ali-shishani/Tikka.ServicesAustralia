@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+  <div class="progress-container">
+    @if(isLoading()){
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+  </div>
+
+  <form [formGroup]="userForm" (ngSubmit)="submit()">
+
+    <div flex layout="row" layout-sm="column" layout-xs="column">
+      <mat-form-field>
+        <input type="email" matInput placeholder="Email" formControlName="email" readonly>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input type="text" matInput placeholder="Username" formControlName="userName" readonly>
+      </mat-form-field>
+    </div>
+
+    <div flex layout="row" layout-sm="column" layout-xs="column">
+      <mat-form-field>
+        <input matInput [matDatepicker]="datepicker" placeholder="Date of Birth" formControlName="dateOfBirth" />
+        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+        <mat-datepicker #datepicker>
+          <mat-datepicker-actions>
+            <button mat-button matDatepickerCancel>Cancel</button>
+            <button mat-button="elevated" matDatepickerApply>Apply</button>
+          </mat-datepicker-actions>
+        </mat-datepicker>
+        <mat-error *ngIf="this.userForm.get('firstname')?.touched && this.userForm.get('firstname')?.hasError('required')">
+          First Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select formControlName="gender" [errorStateMatcher]="matcher" placeholder="Gender">
+          <mat-option>Clear</mat-option>
+          <mat-option value="0">Male</mat-option>
+          <mat-option value="1">Female</mat-option>
+        </mat-select>
+        @if (this.userForm.get('gender')?.hasError('required')) {
+        <mat-error>You must make a selection</mat-error>
+        }
+        @if (this.userForm.get('gender')?.hasError('pattern') && !this.userForm.get('gender')?.hasError('required')) {
+        <mat-error>Your selection is invalid</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div flex layout="row" layout-sm="column" layout-xs="column">
+      <div class="checkbox">
+        <mat-slide-toggle formControlName="isEmailConfirmed">Is Email Confirmed?</mat-slide-toggle>
+      </div>
+    </div>
+
+    <div class="validation-container">
+
+      @for (item of validationErrors; track $index) {
+      <mat-error>
+        {{ item.details }}
+      </mat-error>
+      }
+    </div>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onNoClick()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!userForm.valid" (click)="submit()">Save</button>
+</mat-dialog-actions>
+

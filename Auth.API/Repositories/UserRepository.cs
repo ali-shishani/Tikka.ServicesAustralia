@@ -21,6 +21,13 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<User> UpdateUserAsync(User user)
+    {
+        _authContext.Users.Update(user);
+        await _authContext.SaveChangesAsync();
+        return user;
+    }
+
     public async Task<User?> GetByIdAsync(Guid id)
     {
         return await _authContext.Users

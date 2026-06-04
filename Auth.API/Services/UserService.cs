@@ -13,17 +13,20 @@ public class UserService : IUserService
     private readonly IEmailService _emailService;
     private readonly ILogger<UserService> _logger;
     private readonly RegisterRequestValidator _registerRequestValidator;
+    private readonly UpdateUserRequestValidator _updateUserRequestValidator;
 
     public UserService(
         IUserRepository userRepository,
         IEmailService emailService,
         ILogger<UserService> logger,
-        RegisterRequestValidator registerRequestValidator)
+        RegisterRequestValidator registerRequestValidator,
+        UpdateUserRequestValidator updateUserRequestValidator)
     {
         _userRepository = userRepository;
         _emailService = emailService;
         _logger = logger;
         _registerRequestValidator = registerRequestValidator;
+        _updateUserRequestValidator = updateUserRequestValidator;
     }
 
     private static string GenerateRandomCode(int length = 6)
@@ -117,5 +120,49 @@ public class UserService : IUserService
             _logger.LogError(ex, "Failed to send confirmation email to {Email}", user.Email);
             return (result, errors);
         }
+    }
+
+    public async Task<(GetUserResponse response, List<AppException> errors)> UpdateUserAsync(UpdateUserRequest request)
+    {
+        var errors = new List<AppException>();
+        GetUserResponse? result = null;
+
+        var validationResult = await _updateUserRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            errors = validationResult.Errors.Select(s => new AppException($"Validation failed", s.ErrorMessage)).ToList();
+            return (result, errors);
+        }
+
+        var allUsers = await _userRepository.GetAllAsync();
+        var existingUserByUsername = allUsers.FirstOrDefault(f => f.UserName == request.Username && f.Id != request.UserId);
+        if (existingUserByUsername != null)
+        {
+            errors = new List<AppException>() { new AppException($"Validation failed", "Username already exists") };
+            return (result, errors);
+        }
+
+        var record = await _userRepository.GetByIdAsync(request.UserId);
+        if (record != null) 
+        {
+            record.UserName = request.Username;
+            record.DateOfBirth = request.DateOfBirth;
+            record.Gender = request.Gender;
+            record.IsEmailConfirmed = request.IsEmailConfirmed;
+
+            record = await _userRepository.UpdateUserAsync(record);
+
+            result = new GetUserResponse()
+            {
+                Id = record.Id,
+                Email = record.Email,
+                UserName = record.UserName,
+                DateOfBirth = record.DateOfBirth,
+                Gender = record.Gender.ToString(),
+                IsEmailConfirmed = record.IsEmailConfirmed
+            };
+        }
+
+        return (result, errors);
     }
 }

@@ -39,5 +39,17 @@ namespace Auth.API.Controllers
 
             return await Task.FromResult(Ok(ApiResponse<GetUserResponse>.SuccessResponse(result)));
         }
+
+        [HttpPut("Update")]
+        public async Task<ActionResult<ApiResponse<GetUserResponse>>> Update([FromBody] UpdateUserRequest request)
+        {
+            var (result, errors) = await _userService.UpdateUserAsync(request);
+            if (errors.Count > 0)
+            {
+                return await Task.FromResult(BadRequest(ApiResponse<List<GetUserResponse>>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+            }
+
+            return await Task.FromResult(Ok(ApiResponse<GetUserResponse>.SuccessResponse(result)));
+        }
     }
 }

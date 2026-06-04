@@ -7,4 +7,5 @@ public interface IUserService
 {
     Task<(List<GetUserResponse> response, List<AppException> errors)> GetAll();
     Task<(GetUserResponse response, List<AppException> errors)> RegisterUserAsync(RegisterRequest request);
+    Task<(GetUserResponse response, List<AppException> errors)> UpdateUserAsync(UpdateUserRequest request);
 }

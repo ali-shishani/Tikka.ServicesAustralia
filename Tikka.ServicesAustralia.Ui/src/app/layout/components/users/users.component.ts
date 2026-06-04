@@ -15,6 +15,7 @@ import {
 import { getUsersResponse, getUsersResponseWrapper } from '../../interfaces'
 import { UsersService } from '../../services/users.service'
 import { NewUserComponent } from './new-user/new-user.component'
+import { EditUserComponent } from './edit-user/edit-user.component'
 
 @Component({
   selector: 'app-users',
@@ -97,13 +98,15 @@ export class UsersComponent {
   }
 
   editUser(user: getUsersResponse) {
-    const dialogRef = this.userEditialog.open(NewUserComponent, {
+    const dialogRef = this.userEditialog.open(EditUserComponent, {
       width: '700px',
-      data: { title: 'New user', output: null },
+      data: { title: 'Edit user', record: user },
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        this.dataSource.push(result)
+        this.dataSource = this.dataSource.map(record =>
+          record.id === user.id ? result : record
+        );
         this.table.renderRows();
         this.isLoading.set(false);
       }
