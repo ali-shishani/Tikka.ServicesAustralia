@@ -51,7 +51,6 @@ export class EditUserComponent {
   constructor(
     private usersService: UsersService
   ) {
-    // this.userForm.setValue({ email: this.record.email, userName: this.record.userName });
     this.userForm.get('email')?.setValue(this.record.email);
     this.userForm.get('userName')?.setValue(this.record.userName);
     this.userForm.get('dateOfBirth')?.setValue(this.record.dateOfBirth);

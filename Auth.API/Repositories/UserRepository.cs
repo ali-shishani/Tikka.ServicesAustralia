@@ -28,6 +28,13 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<bool> DeleteUserAsync(User user)
+    {
+        _authContext.Users.Remove(user);
+        await _authContext.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<User?> GetByIdAsync(Guid id)
     {
         return await _authContext.Users

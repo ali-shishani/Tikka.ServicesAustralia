@@ -6,7 +6,7 @@ import { map, Observable, of, switchMap, tap, catchError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { environment } from '../../../environments/environment';
-import { getUsersResponseWrapper, UpdateUserRequest } from '../interfaces';
+import { getUsersResponseWrapper, UpdateUserRequest, deleteUsersResponseWrapper } from '../interfaces';
 import { RegisterRequest } from '../../public/interfaces';
 
 @Injectable({
@@ -31,7 +31,6 @@ export class UsersService {
   register(registerRequest: RegisterRequest): Observable<getUsersResponseWrapper> {
     return this.http.post<getUsersResponseWrapper>(environment.authApiUrl + '/api/user/register', registerRequest).pipe(
       tap((res) => {
-        this.snackbar.open('Create Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
       }),
     );
   }
@@ -39,7 +38,22 @@ export class UsersService {
   update(updateUserRequest: UpdateUserRequest): Observable<getUsersResponseWrapper> {
     return this.http.put<getUsersResponseWrapper>(environment.authApiUrl + '/api/user/update', updateUserRequest).pipe(
       tap((res) => {
-        this.snackbar.open('Update Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
+      }),
+    );
+  }
+
+  delete(userId: string): Observable<deleteUsersResponseWrapper> {
+    return this.http.delete<deleteUsersResponseWrapper>(environment.authApiUrl + '/api/user/delete?userId=' + userId).pipe(
+      tap((res) => {
+      }),
+    );
+  }
+
+  requestConfirmationCode(email: string): Observable<any> {
+    // , { responseType: 'text' }
+    return this.http.post(environment.authApiUrl + '/api/account/request-confirmation-code', { 'email': email }).pipe(
+      tap((res) => {
+        debugger;
       }),
     );
   }

@@ -1,5 +1,5 @@
 import { Component, inject, model, signal, ViewChild } from '@angular/core';
-import { map, Observable, of, switchMap, tap } from 'rxjs';
+import { map, Observable, of, switchMap, tap, catchError } from 'rxjs';
 
 import { MatTable } from '@angular/material/table';
 import {
@@ -11,9 +11,11 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { getUsersResponse, getUsersResponseWrapper } from '../../interfaces'
 import { UsersService } from '../../services/users.service'
+import { ConfirmationWindowComponent } from '../dialog/confirmation-window/confirmation-window.component'
 import { NewUserComponent } from './new-user/new-user.component'
 import { EditUserComponent } from './edit-user/edit-user.component'
 
@@ -37,7 +39,8 @@ export class UsersComponent {
   readonly userEditialog = inject(MatDialog);
 
   constructor(
-    private usersService: UsersService
+    private usersService: UsersService,
+    private snackbar: MatSnackBar
   ) {
     this.loadUsers().pipe(
       tap((res: getUsersResponseWrapper) => {
@@ -83,6 +86,7 @@ export class UsersComponent {
         this.dataSource.push(result)
         this.table.renderRows();
         this.isLoading.set(false);
+        this.snackbar.open('Create Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
       }
     });
   }
@@ -107,8 +111,62 @@ export class UsersComponent {
         this.dataSource = this.dataSource.map(record =>
           record.id === user.id ? result : record
         );
+        this.expandedElement = result;
         this.table.renderRows();
         this.isLoading.set(false);
+        this.snackbar.open('Update Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
+      }
+    });
+  }
+
+  deleteUser(user: getUsersResponse) {
+    const dialogRef = this.userEditialog.open(ConfirmationWindowComponent, {
+      width: '700px',
+      data: { title: 'Delete user', description: 'You are about to delete user "' + user.userName + '". Would you like to continue?' },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.isLoading.set(true);
+        this.usersService.delete(user.id).pipe(
+          tap(res => {
+            this.dataSource = this.dataSource.filter(record =>
+              record.id !== user.id
+            );
+            this.table.renderRows();
+            this.isLoading.set(false);
+            this.snackbar.open('Update Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
+          }),
+        ).subscribe();
+      }
+    });
+  }
+
+  sendConfirmationEmail(user: getUsersResponse) {
+    const dialogRef = this.userEditialog.open(ConfirmationWindowComponent, {
+      width: '700px',
+      data: { title: 'Send confirmation email', description: 'You are about to send a confirmation email to user "' + user.userName + '". Would you like to continue?' },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.isLoading.set(true);
+        this.usersService.requestConfirmationCode(user.email).pipe(
+          tap(res => {
+            this.table.renderRows();
+            this.isLoading.set(false);
+            this.snackbar.open('Confirmation code request Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
+          }),
+          catchError(res => {
+            if (res.status === 0) {
+              // Client-side or network error
+              console.error('An error occurred:', res.error);
+            } else {
+              // Backend returned an unsuccessful response code
+              this.snackbar.open(res.error, 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
+              this.isLoading.set(false);
+            }
+            return of(res);
+          })
+        ).subscribe();
       }
     });
   }

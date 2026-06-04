@@ -50,3 +50,8 @@ export interface UpdateUserRequest {
   gender: number;
   isEmailConfirmed: boolean;
 }
+
+export interface deleteUsersResponseWrapper {
+  data: Boolean;
+  errors: ApiException[];
+}

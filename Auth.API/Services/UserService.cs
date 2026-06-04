@@ -1,5 +1,6 @@
 using Auth.API.Models.Responses;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Tsp;
 using Tikka.ServicesAustralia.Core.Configs;
 using Tikka.ServicesAustralia.Core.Data.Entities;
@@ -161,6 +162,20 @@ public class UserService : IUserService
                 Gender = record.Gender.ToString(),
                 IsEmailConfirmed = record.IsEmailConfirmed
             };
+        }
+
+        return (result, errors);
+    }
+
+    public async Task<(bool response, List<AppException> errors)> DeleteUserAsync(Guid userId)
+    {
+        var errors = new List<AppException>();
+        var result = false;
+
+        var record = await _userRepository.GetByIdAsync(userId);
+        if (record != null)
+        {
+            result = await _userRepository.DeleteUserAsync(record);
         }
 
         return (result, errors);

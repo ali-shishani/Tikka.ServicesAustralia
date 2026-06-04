@@ -46,10 +46,22 @@ namespace Auth.API.Controllers
             var (result, errors) = await _userService.UpdateUserAsync(request);
             if (errors.Count > 0)
             {
-                return await Task.FromResult(BadRequest(ApiResponse<List<GetUserResponse>>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+                return await Task.FromResult(BadRequest(ApiResponse<GetUserResponse>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
             }
 
             return await Task.FromResult(Ok(ApiResponse<GetUserResponse>.SuccessResponse(result)));
+        }
+
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<ApiResponse<bool>>> Delete(Guid userId)
+        {
+            var (result, errors) = await _userService.DeleteUserAsync(userId);
+            if (errors.Count > 0)
+            {
+                return await Task.FromResult(BadRequest(ApiResponse<bool>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+            }
+
+            return await Task.FromResult(Ok(ApiResponse<bool>.SuccessResponse(result)));
         }
     }
 }
