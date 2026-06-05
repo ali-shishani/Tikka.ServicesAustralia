@@ -9,17 +9,23 @@
   <form [formGroup]="userForm" (ngSubmit)="submit()">
 
     <div flex layout="row" layout-sm="column" layout-xs="column">
-      <mat-form-field>
+      <mat-form-field class="form-field">
+        <mat-label>Email</mat-label>
         <input type="email" matInput placeholder="Email" formControlName="email" readonly>
       </mat-form-field>
 
-      <mat-form-field>
-        <input type="text" matInput placeholder="Username" formControlName="userName" readonly>
+      <mat-form-field class="form-field">
+        <mat-label>Username</mat-label>
+        <input type="text" matInput placeholder="username" formControlName="userName">
+        <mat-error *ngIf="this.userForm.get('userName')?.touched && this.userForm.get('userName')?.hasError('required')">
+          Username is required
+        </mat-error>
       </mat-form-field>
     </div>
 
     <div flex layout="row" layout-sm="column" layout-xs="column">
-      <mat-form-field>
+      <mat-form-field class="form-field">
+        <mat-label>Date of birth</mat-label>
         <input matInput [matDatepicker]="datepicker" placeholder="Date of Birth" formControlName="dateOfBirth" />
         <mat-hint>DD/MM/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
@@ -34,7 +40,8 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="form-field">
+        <mat-label>Gender</mat-label>
         <mat-select formControlName="gender" [errorStateMatcher]="matcher" placeholder="Gender">
           <mat-option>Clear</mat-option>
           <mat-option value="0">Male</mat-option>

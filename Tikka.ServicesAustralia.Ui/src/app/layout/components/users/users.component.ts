@@ -36,7 +36,7 @@ export class UsersComponent {
 
   @ViewChild(MatTable) table!: MatTable<getUsersResponse>;
 
-  readonly userEditialog = inject(MatDialog);
+  readonly userEditDialog = inject(MatDialog);
 
   constructor(
     private usersService: UsersService,
@@ -54,12 +54,14 @@ export class UsersComponent {
     return this.usersService.getAll();
   }
 
-  dateOfBirthText(dateValue: string): string {
-    const dateText = dateValue.split('T')[0];
-    if (dateText) {
-      return dateText.split('-')[2] + '/' + dateText.split('-')[1] + '/' + dateText.split('-')[0];
-    }
-    return dateText;
+  dateOfBirthText(dateValue: Date): string {
+    // const dateText = dateValue.split('T')[0];
+    // if (dateText) {
+    //   return dateText.split('-')[2] + '/' + dateText.split('-')[1] + '/' + dateText.split('-')[0];
+    // }
+    // return dateText;
+    
+    return dateValue.toLocaleString();
   }
 
   emailConfirmedText(emailConfirmedValue: boolean): string {
@@ -77,7 +79,7 @@ export class UsersComponent {
   }
 
   newUser() {
-    const dialogRef = this.userEditialog.open(NewUserComponent, {
+    const dialogRef = this.userEditDialog.open(NewUserComponent, {
       width: '700px',
       data: { title: 'New user', output: null },
     });
@@ -102,7 +104,7 @@ export class UsersComponent {
   }
 
   editUser(user: getUsersResponse) {
-    const dialogRef = this.userEditialog.open(EditUserComponent, {
+    const dialogRef = this.userEditDialog.open(EditUserComponent, {
       width: '700px',
       data: { title: 'Edit user', record: user },
     });
@@ -120,7 +122,7 @@ export class UsersComponent {
   }
 
   deleteUser(user: getUsersResponse) {
-    const dialogRef = this.userEditialog.open(ConfirmationWindowComponent, {
+    const dialogRef = this.userEditDialog.open(ConfirmationWindowComponent, {
       width: '700px',
       data: { title: 'Delete user', description: 'You are about to delete user "' + user.userName + '". Would you like to continue?' },
     });
@@ -142,7 +144,7 @@ export class UsersComponent {
   }
 
   sendConfirmationEmail(user: getUsersResponse) {
-    const dialogRef = this.userEditialog.open(ConfirmationWindowComponent, {
+    const dialogRef = this.userEditDialog.open(ConfirmationWindowComponent, {
       width: '700px',
       data: { title: 'Send confirmation email', description: 'You are about to send a confirmation email to user "' + user.userName + '". Would you like to continue?' },
     });

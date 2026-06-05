@@ -63,5 +63,24 @@ namespace Auth.API.Controllers
 
             return await Task.FromResult(Ok(ApiResponse<bool>.SuccessResponse(result)));
         }
+
+        [HttpPut("ChangePassword")]
+        public async Task<ActionResult<ApiResponse<GetUserResponse>>> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var user = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(user) || !Guid.TryParse(user, out var id))
+            {
+                return Unauthorized("Invalid user token");
+            }
+
+            var (result, errors) = await _userService.ChangePasswordAsync(request, id);
+            if (errors.Count > 0)
+            {
+                return await Task.FromResult(BadRequest(ApiResponse<bool>.FailureResponse(StatusCodes.Status400BadRequest, errors)));
+            }
+
+            return await Task.FromResult(Ok(ApiResponse<bool>.SuccessResponse(result)));
+        }
     }
 }

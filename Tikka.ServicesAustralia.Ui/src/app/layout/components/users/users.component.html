@@ -49,14 +49,19 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
-            <button mat-stroked-button color="primary" class="record-action-button" (click)="$event.stopPropagation(); editUser(element)">
+            <button mat-icon-button class="app-icon-button" (click)="$event.stopPropagation(); editUser(element)" matTooltip="Edit user">
               <mat-icon>edit</mat-icon>
-              Edit
             </button>
-            <button mat-stroked-button class="record-action-button record-action-button-delete" (click)="$event.stopPropagation(); deleteUser(element)">
+            <button mat-icon-button class="app-icon-button record-action-button-delete" (click)="$event.stopPropagation(); deleteUser(element)" matTooltip="Delete user">
               <mat-icon>delete</mat-icon>
-              Delete
             </button>
+
+            @if(!element.isEmailConfirmed)
+            {
+            <button mat-icon-button class="app-icon-button" (click)="$event.stopPropagation(); sendConfirmationEmail(element)" matTooltip="Send email confirmation email">
+              <mat-icon>email</mat-icon>
+            </button>
+            }
           </td>
         </ng-container>
 
@@ -96,12 +101,6 @@
                     </div>
                     <mat-chip>{{emailConfirmedText(element.isEmailConfirmed)}}</mat-chip>
                   </div>
-                </div>
-                <div class="user-detail-actions">
-                  <button mat-stroked-button color="primary" [disabled]="element.isEmailConfirmed" (click)="sendConfirmationEmail(element)">
-                    Send confirmation email
-                    <mat-icon>mail_outline</mat-icon>
-                  </button>
                 </div>
               </div>
             </div>

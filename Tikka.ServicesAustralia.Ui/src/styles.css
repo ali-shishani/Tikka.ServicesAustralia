@@ -1,5 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
+/*@import "@angular/material/prebuilt-themes/indigo-pink.css";*/
+@import "@angular/material/prebuilt-themes/deeppurple-amber.css";
+/*@import "@angular/material/prebuilt-themes/pink-bluegrey.css";*/
+/*@import "@angular/material/prebuilt-themes/purple-green.css";*/
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.app-icon-button {
+  /* Set the button container size */
+  width: 46px !important;
+  height: 46px !important;
+  /* Update Angular Material design tokens */
+  --mdc-icon-button-state-layer-size: 46px;
+  --mdc-icon-button-icon-size: 22px;
+}
+  /* Force the internal icon element to match the token size */
+  .app-icon-button mat-icon {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 22px !important;
+    line-height: 22px !important;
+  }

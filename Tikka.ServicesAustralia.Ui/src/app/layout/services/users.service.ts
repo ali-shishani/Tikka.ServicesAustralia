@@ -6,7 +6,7 @@ import { map, Observable, of, switchMap, tap, catchError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { environment } from '../../../environments/environment';
-import { getUsersResponseWrapper, UpdateUserRequest, deleteUsersResponseWrapper } from '../interfaces';
+import { getUsersResponseWrapper, UpdateUserRequest, deleteUsersResponseWrapper, ChangePasswordRequest, changePasswordResponseWrapper } from '../interfaces';
 import { RegisterRequest } from '../../public/interfaces';
 
 @Injectable({
@@ -54,6 +54,13 @@ export class UsersService {
     return this.http.post(environment.authApiUrl + '/api/account/request-confirmation-code', { 'email': email }).pipe(
       tap((res) => {
         debugger;
+      }),
+    );
+  }
+
+  changePassword(changePasswordRequest: ChangePasswordRequest): Observable<changePasswordResponseWrapper> {
+    return this.http.put<changePasswordResponseWrapper>(environment.authApiUrl + '/api/user/changepassword', changePasswordRequest).pipe(
+      tap((res) => {
       }),
     );
   }

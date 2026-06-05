@@ -37,12 +37,8 @@
       border-bottom-width: 0;
     }
 
-    .record-action-button {
-      margin-left: 5px;
-    }
-
-    .record-action-button-delete{
-        color: red;
+    .record-action-button-delete {
+      color: red;
     }
 
     .user-detail-wrapper {
@@ -63,11 +59,6 @@
 
       .user-detail-field {
         margin: 5px 5px 5px 5px;
-      }
-
-      .user-detail-actions {
-        margin: 20px 0px 0px 20px;
-        width: 50%;
       }
     }
 

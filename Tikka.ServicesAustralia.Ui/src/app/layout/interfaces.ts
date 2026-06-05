@@ -55,3 +55,13 @@ export interface deleteUsersResponseWrapper {
   data: Boolean;
   errors: ApiException[];
 }
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface changePasswordResponseWrapper {
+  data: Boolean;
+  errors: ApiException[];
+}

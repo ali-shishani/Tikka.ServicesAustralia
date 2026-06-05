@@ -15,19 +15,23 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly RegisterRequestValidator _registerRequestValidator;
     private readonly UpdateUserRequestValidator _updateUserRequestValidator;
+    private readonly ChangePasswordRequestValidator _changePasswordRequestValidator;
+    
 
     public UserService(
         IUserRepository userRepository,
         IEmailService emailService,
         ILogger<UserService> logger,
         RegisterRequestValidator registerRequestValidator,
-        UpdateUserRequestValidator updateUserRequestValidator)
+        UpdateUserRequestValidator updateUserRequestValidator,
+        ChangePasswordRequestValidator changePasswordRequestValidator)
     {
         _userRepository = userRepository;
         _emailService = emailService;
         _logger = logger;
         _registerRequestValidator = registerRequestValidator;
         _updateUserRequestValidator = updateUserRequestValidator;
+        _changePasswordRequestValidator = changePasswordRequestValidator;
     }
 
     private static string GenerateRandomCode(int length = 6)
@@ -42,6 +46,11 @@ public class UserService : IUserService
     private static string PasswordHash(string password)
     {
         return BCrypt.Net.BCrypt.HashPassword(password);
+    }
+
+    private static bool PasswordVerify(string password, string hash)
+    {
+        return BCrypt.Net.BCrypt.Verify(password, hash);
     }
 
     public async Task<(List<GetUserResponse> response, List<AppException> errors)> GetAll()
@@ -176,6 +185,36 @@ public class UserService : IUserService
         if (record != null)
         {
             result = await _userRepository.DeleteUserAsync(record);
+        }
+
+        return (result, errors);
+    }
+
+    public async Task<(bool response, List<AppException> errors)> ChangePasswordAsync(ChangePasswordRequest request, Guid userId)
+    {
+        var errors = new List<AppException>();
+        var result = false;
+
+        var validationResult = await _changePasswordRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            errors = validationResult.Errors.Select(s => new AppException($"Validation failed", s.ErrorMessage)).ToList();
+            return (result, errors);
+        }
+
+        var record = await _userRepository.GetByIdAsync(userId);
+        if (record != null)
+        {
+            if (!PasswordVerify(request.CurrentPassword, record.Password))
+            {
+                errors = new List<AppException>() { new AppException($"Validation failed", "Invalid Password") };
+                return (result, errors);
+            }
+
+            record.Password = PasswordHash(request.NewPassword);
+            record = await _userRepository.UpdateUserAsync(record);
+
+            result = true;
         }
 
         return (result, errors);

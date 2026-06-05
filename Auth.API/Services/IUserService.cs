@@ -9,4 +9,5 @@ public interface IUserService
     Task<(GetUserResponse response, List<AppException> errors)> RegisterUserAsync(RegisterRequest request);
     Task<(GetUserResponse response, List<AppException> errors)> UpdateUserAsync(UpdateUserRequest request);
     Task<(bool response, List<AppException> errors)> DeleteUserAsync(Guid userId);
+    Task<(bool response, List<AppException> errors)> ChangePasswordAsync(ChangePasswordRequest request, Guid userId);
 }
