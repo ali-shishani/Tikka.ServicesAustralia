@@ -2,6 +2,7 @@ namespace Horus.API.Services;
 
 public class AccountService : IAccountService
 {
+    private readonly JwtConfig _config;
     private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtService;
     private readonly IEmailService _emailService;
@@ -11,6 +12,7 @@ public class AccountService : IAccountService
     private readonly ILogger<AccountService> _logger;
 
     public AccountService(
+        JwtConfig config,
         IUserRepository userRepository,
         IJwtService jwtService,
         IEmailService emailService,
@@ -19,6 +21,7 @@ public class AccountService : IAccountService
         LoginRequestValidator loginRequestValidator,
         ILogger<AccountService> logger)
     {
+        _config = config;
         _userRepository = userRepository;
         _jwtService = jwtService;
         _emailService = emailService;
@@ -117,7 +120,7 @@ public class AccountService : IAccountService
 
             // Генерация refresh token
             user.RefreshToken = _jwtService.GenerateRefreshToken();
-            user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(7);
+            user.RefreshTokenExpireTime = DateTime.UtcNow.AddMinutes(_config.RefreshExpiration);
             await _userRepository.SaveChangesAsync();
 
             var loginResponse = new LoginResponse(

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { PublicRoutingModule } from './public-routing.module';
 import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,7 +21,6 @@ import { RouterLink } from '@angular/router';
   declarations: [
     // Own Components
     LoginComponent,
-    RegisterComponent
   ],
   providers: [provideNativeDateAdapter()],
   imports: [

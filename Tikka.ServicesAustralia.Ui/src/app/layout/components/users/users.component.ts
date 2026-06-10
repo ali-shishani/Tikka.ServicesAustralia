@@ -26,7 +26,7 @@ import { EditUserComponent } from './edit-user/edit-user.component'
   styleUrl: './users.component.css'
 })
 export class UsersComponent {
-  columnsToDisplay: string[] = ['userName', 'email', 'action'];
+  columnsToDisplay: string[] = ['email', 'userName', 'action'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
   dataSource!: getUsersResponse[];
   expandedElement!: getUsersResponse | null;
@@ -55,13 +55,13 @@ export class UsersComponent {
   }
 
   dateOfBirthText(dateValue: Date): string {
-    // const dateText = dateValue.split('T')[0];
-    // if (dateText) {
-    //   return dateText.split('-')[2] + '/' + dateText.split('-')[1] + '/' + dateText.split('-')[0];
-    // }
-    // return dateText;
+    const dateText = dateValue.toLocaleString().split('T')[0];
+    if (dateText) {
+      return dateText.split('-')[2] + '/' + dateText.split('-')[1] + '/' + dateText.split('-')[0];
+    }
+    return dateText;
     
-    return dateValue.toLocaleString();
+    // return dateValue.toLocaleString();
   }
 
   emailConfirmedText(emailConfirmedValue: boolean): string {

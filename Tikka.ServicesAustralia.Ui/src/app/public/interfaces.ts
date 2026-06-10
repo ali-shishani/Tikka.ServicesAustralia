@@ -52,3 +52,17 @@ export interface RegisterResponse {
   message: string;
   email: string;
 }
+
+  /*
+  refresh token
+  */
+export interface RefreshTokenRequest {
+  token: string;
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  token: string;
+  refreshToken: string;
+  refreshTokenExpireTime: string;
+}

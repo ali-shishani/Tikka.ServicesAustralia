@@ -1,6 +1,9 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
 <mat-dialog-content>
-  <p>{{data.description}}</p>
+  <div class="content">
+    <mat-icon>warning</mat-icon>
+    <p>{{data.description}}</p>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button (click)="onNoClick()">Cancel</button>

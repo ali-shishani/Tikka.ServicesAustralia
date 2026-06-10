@@ -4,6 +4,10 @@
   margin: 100px 0px;
 }
 
+.title{
+    margin: 10px 0 10px 0;
+}
+
 .progress-container {
   min-height: 10px;
 }

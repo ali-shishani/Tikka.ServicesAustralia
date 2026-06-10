@@ -42,7 +42,7 @@ export class EditUserComponent {
   matcher = new MyErrorStateMatcher();
   userForm = new FormGroup({
     email: new FormControl(''),
-    userName: new FormControl(''),
+    userName: new FormControl('', [Validators.required]),
     dateOfBirth: new FormControl(new Date(), [Validators.required]),
     gender: new FormControl('', [Validators.required]),
     isEmailConfirmed: new FormControl(false),

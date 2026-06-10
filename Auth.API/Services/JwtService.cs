@@ -29,7 +29,7 @@ public class JwtService : IJwtService
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
                 // new Claim("Role", user.Role)
             ]),
-            Expires = DateTime.UtcNow.AddHours(_config.Expiration),
+            Expires = DateTime.UtcNow.AddMinutes(_config.Expiration),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
         };

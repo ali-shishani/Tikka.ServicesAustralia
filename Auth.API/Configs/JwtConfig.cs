@@ -21,4 +21,9 @@ public class JwtConfig
     /// Expiration
     /// </summary>
     public int Expiration { get; set; }
+
+    /// <summary>
+    /// Refresh Token Expiration
+    /// </summary>
+    public int RefreshExpiration { get; set; }
 }

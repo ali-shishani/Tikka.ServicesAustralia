@@ -38,7 +38,11 @@
     }
 
     .record-action-button-delete {
-      color: red;
+      color: #e30505;
+    }
+
+    .record-action-button-email {
+      color: #4d259c;
     }
 
     .user-detail-wrapper {
@@ -54,11 +58,17 @@
     }
 
     .user-detail {
-      display: flex;
+      display: inline-flex;
       min-height: 0;
+      /*background: #f6e6fa;*/
+      border-radius: 10px;
 
       .user-detail-field {
-        margin: 5px 5px 5px 5px;
+        margin: 5px 30px 5px 5px;
+
+        .user-detail-field-label {
+          font-weight: 500;
+        }
       }
     }
 

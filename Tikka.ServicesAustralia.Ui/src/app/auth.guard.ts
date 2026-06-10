@@ -23,9 +23,6 @@ export class AuthGuard implements CanActivate {
     // --> then redirect to the base route and deny the routing
     // --> else return true and allow the routing
     if (this.jwtService.isTokenExpired()) {
-      localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
-      localStorage.removeItem(LOCALSTORAGE_REFRESHTOKEN_KEY);
-      localStorage.removeItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY);
       this.router.navigate(['']);
       return false;
     } else {

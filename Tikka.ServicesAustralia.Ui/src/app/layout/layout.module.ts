@@ -19,6 +19,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDividerModule } from '@angular/material/divider';
 import {
   MatDialog,
   MatDialogActions,
@@ -71,6 +72,7 @@ import { ChangePasswordComponent } from './components/users/change-password/chan
     MatTooltipModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatDividerModule,
     MatDialogModule,
     MatDialogActions,
     MatDialogClose,
