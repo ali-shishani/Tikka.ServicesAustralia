@@ -1,4 +1,4 @@
-import { LOCALSTORAGE_TOKEN_KEY, LOCALSTORAGE_REFRESHTOKEN_KEY, LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY } from './../../app.module';
+import { LOCALSTORAGE_TOKEN_KEY, LOCALSTORAGE_REFRESHTOKEN_KEY, LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY, LOCALSTORAGE_StayLoggedIn_KEY } from './../../app.module';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router} from '@angular/router';
@@ -40,18 +40,16 @@ export class AuthService {
       tap((res) => {
         localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, res.token);
         localStorage.setItem(LOCALSTORAGE_REFRESHTOKEN_KEY, res.refreshToken);
-        localStorage.setItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY, res.refreshTokenExpireTime);
+        localStorage.setItem(LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY, res.refreshTokenExpireTime);
+        localStorage.setItem(LOCALSTORAGE_StayLoggedIn_KEY, loginRequest.stayLoggedIn.toString());
       }),
-      tap(() => this.snackbar.open('Login Successfull', 'Close', {
-        duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
-      }))
     );
   }
 
   logOut(): Observable<string> {
     const token = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
     const refreshToken = localStorage.getItem(LOCALSTORAGE_REFRESHTOKEN_KEY);
-    const refreshTokenExpiry = localStorage.getItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY);
+    const refreshTokenExpiry = localStorage.getItem(LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY);
     const LogoutRequest: LogoutRequest = {
       token: token!,
       refreshToken: refreshToken!,
@@ -61,8 +59,9 @@ export class AuthService {
       tap(() => {
         localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
         localStorage.removeItem(LOCALSTORAGE_REFRESHTOKEN_KEY);
-        localStorage.removeItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY);
-        this.snackbar.open('Logout Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
+        localStorage.removeItem(LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY);
+        localStorage.removeItem(LOCALSTORAGE_StayLoggedIn_KEY);
+        // this.snackbar.open('Logout Successfull', 'Close', { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
       })
     );
   }
@@ -97,27 +96,27 @@ export class AuthService {
    refresh the token
    */
   refreshToken(): Observable<RefreshTokenResponse>{
+    const stayLoggedIn = localStorage.getItem(LOCALSTORAGE_StayLoggedIn_KEY)!
     const request: RefreshTokenRequest = {
       token: localStorage.getItem(LOCALSTORAGE_TOKEN_KEY)!,
       refreshToken: localStorage.getItem(LOCALSTORAGE_REFRESHTOKEN_KEY)!,
+      stayLoggedIn: stayLoggedIn.toLowerCase() === "true"
     };
 
     return this.http.post<RefreshTokenResponse>(environment.authApiUrl + '/api/account/refresh-token', request).pipe(
       tap((res: RefreshTokenResponse) => {
         localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
         localStorage.removeItem(LOCALSTORAGE_REFRESHTOKEN_KEY);
-        localStorage.removeItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY);
+        localStorage.removeItem(LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY);
         localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, res.token);
         localStorage.setItem(LOCALSTORAGE_REFRESHTOKEN_KEY, res.refreshToken);
-        localStorage.setItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY, res.refreshTokenExpireTime);
-        this.isRefreshing$.next(false);
+        localStorage.setItem(LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY, res.refreshTokenExpireTime);
       }),
       catchError((refreshError) => {
         // If the refresh token itself is expired or invalid, clear all
         localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
         localStorage.removeItem(LOCALSTORAGE_REFRESHTOKEN_KEY);
-        localStorage.removeItem(LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY);
-        this.isRefreshing$.next(false);
+        localStorage.removeItem(LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY);
         this.router.navigate(['']);
         return throwError(() => refreshError);
       }

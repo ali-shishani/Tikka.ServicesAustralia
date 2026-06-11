@@ -120,7 +120,15 @@ public class AccountService : IAccountService
 
             // Генерация refresh token
             user.RefreshToken = _jwtService.GenerateRefreshToken();
-            user.RefreshTokenExpireTime = DateTime.UtcNow.AddMinutes(_config.RefreshExpiration);
+            if (request.StayLoggedIn)
+            {
+                user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(7);
+            }
+            else
+            {
+                user.RefreshTokenExpireTime = DateTime.UtcNow.AddMinutes(_config.RefreshExpiration);
+            }
+            
             await _userRepository.SaveChangesAsync();
 
             var loginResponse = new LoginResponse(
@@ -223,7 +231,7 @@ public class AccountService : IAccountService
         }
     }
 
-    public async Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken)
+    public async Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, bool stayLoggedIn)
     {
         try
         {
@@ -243,7 +251,14 @@ public class AccountService : IAccountService
             }
 
             user.RefreshToken = _jwtService.GenerateRefreshToken();
-            user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(7);
+            if(stayLoggedIn)
+            {
+                user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(7);
+            }
+            else
+            {
+                user.RefreshTokenExpireTime = DateTime.UtcNow.AddMinutes(_config.RefreshExpiration);
+            }
             await _userRepository.SaveChangesAsync();
 
             var tokenDto = new TokenDto

@@ -3,7 +3,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { tap, catchError, throwError, of } from 'rxjs';
 import { Router } from '@angular/router';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { ApiException } from '../../layout/interfaces'
+import { LoginRequest } from '../interfaces';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -17,6 +20,7 @@ export class LoginComponent {
   loginForm: FormGroup = new FormGroup({
     usernameOrEmail: new FormControl(null, [Validators.required]),
     password: new FormControl(null, [Validators.required]),
+    stayLoggedIn: new FormControl(false),
   });
 
   protected readonly isLoading = signal(false);
@@ -24,7 +28,8 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackbar: MatSnackBar,
   ) { }
 
   login() {
@@ -35,7 +40,13 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.validationError = null;
 
-    this.authService.login(this.loginForm.value).pipe(
+    const request: LoginRequest = {
+      usernameOrEmail: this.loginForm.value.usernameOrEmail,
+      password: this.loginForm.value.password,
+      stayLoggedIn: this.loginForm.value.stayLoggedIn,
+    };
+
+    this.authService.login(request).pipe(
       // route to protected/dashboard, if login was successfull
       tap(() => {
         this.isLoading.set(false);
@@ -49,6 +60,10 @@ export class LoginComponent {
           // Backend returned an unsuccessful response code
           this.validationError = res.error;
           this.isLoading.set(false);
+          this.validationError = {
+            message: 'Login failed',
+            details: 'Login failed',
+          };
         }
         return of(res);
       })

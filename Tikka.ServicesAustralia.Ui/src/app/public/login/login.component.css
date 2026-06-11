@@ -21,7 +21,7 @@ mat-card {
     justify-content: center;
 
     form {
-      .mat-form-field {
+      mat-form-field {
         width: 100%;
         min-width: 300px;
       }

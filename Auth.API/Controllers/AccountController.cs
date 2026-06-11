@@ -68,7 +68,7 @@ public class AccountController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var result = await _accountService.RefreshTokenAsync(tokenDto.RefreshToken);
+        var result = await _accountService.RefreshTokenAsync(tokenDto.RefreshToken, tokenDto.StayLoggedIn);
 
         if (result.IsFailure)
         {

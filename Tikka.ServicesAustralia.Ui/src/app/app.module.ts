@@ -27,7 +27,8 @@ import { AuthInterceptor } from './public/services/auth.interceptor';
 // specify the key where the token is stored in the local storage
 export const LOCALSTORAGE_TOKEN_KEY = 'tikkaTokenKey';
 export const LOCALSTORAGE_REFRESHTOKEN_KEY = 'tikkaRefreshTokenKey';
-export const LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY = 'tikkaRefreshTokenExpiryKey';
+export const LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY = 'tikkaRefreshTokenExpiryKey';
+export const LOCALSTORAGE_StayLoggedIn_KEY = 'tikkaStayLoggedInKey';
 
 // specify tokenGetter for the angular jwt package
 export function tokenGetter() {

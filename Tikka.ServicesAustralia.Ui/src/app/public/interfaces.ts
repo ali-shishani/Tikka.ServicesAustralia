@@ -25,6 +25,7 @@ Interface for the Login Request (can look different, based on your backend api)
 export interface LoginRequest {
   usernameOrEmail: string;
   password: string;
+  stayLoggedIn: boolean;
 }
 
 export interface LogoutRequest {
@@ -59,6 +60,7 @@ export interface RegisterResponse {
 export interface RefreshTokenRequest {
   token: string;
   refreshToken: string;
+  stayLoggedIn: boolean;
 }
 
 export interface RefreshTokenResponse {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
-import { LOCALSTORAGE_TOKEN_KEY, LOCALSTORAGE_REFRESHTOKEN_KEY, LOCALSTORAGE_TREFRESHTOKENEXPIRY_KEY } from './app.module';
+import { LOCALSTORAGE_TOKEN_KEY, LOCALSTORAGE_REFRESHTOKEN_KEY, LOCALSTORAGE_REFRESHTOKENEXPIRY_KEY } from './app.module';
 
 @Injectable({
   providedIn: 'root'

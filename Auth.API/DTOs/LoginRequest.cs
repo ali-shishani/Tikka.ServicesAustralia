@@ -4,4 +4,5 @@ public class LoginRequest
 {
     public required string UsernameOrEmail { get; set; }
     public required string Password { get; set; }
+    public bool StayLoggedIn { get; set; }  = false;
 }
